@@ -1,0 +1,13 @@
+{
+  "name": "learn",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite"
+  },
+  "dependencies": {
+    "monaco-editor": "^0.33.0"
+  },
+  "devDependencies": {
+    "vite": "^2.9.5"
+  }
+}
