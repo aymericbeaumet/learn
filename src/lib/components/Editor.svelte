@@ -10,6 +10,7 @@
 	let editor = null;
 	let domElement = null;
 
+	$: editor && (editor.getModel().value = value);
 	$: editor && editor.updateOptions({ readOnly });
 
 	onMount(async () => {

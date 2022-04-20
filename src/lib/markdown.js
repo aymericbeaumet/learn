@@ -70,5 +70,8 @@ export function toJavaScript(md) {
 
 	closeComment();
 
-	return [frontmatter, code.join('').trim()];
+	return {
+		code: code.join('').trim(),
+		frontmatter
+	};
 }
