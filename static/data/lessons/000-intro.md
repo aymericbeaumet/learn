@@ -1,5 +1,5 @@
 ---
-expect:
+vars:
   areYouReady: true
 ---
 

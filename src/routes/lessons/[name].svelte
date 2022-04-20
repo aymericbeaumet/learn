@@ -28,8 +28,8 @@
 	$: {
 		try {
 			if (!done) {
-				const { values } = execute(code);
-				done = isMatch(values, frontmatter.expect);
+				const { vars } = execute(code);
+				done = isMatch(vars, frontmatter.vars || {});
 			}
 		} catch (err) {
 			console.error(err);

@@ -2,7 +2,7 @@ import * as babelParser from '@babel/parser';
 
 export function execute(code) {
 	const events = [];
-	const values = {};
+	const vars = {};
 
 	const ast = babelParser.parse(code, {
 		sourceType: 'script',
@@ -35,9 +35,9 @@ export function execute(code) {
 		},
 		// __track__
 		function (ident, value) {
-			values[ident] = value;
+			vars[ident] = value;
 		}
 	);
 
-	return { events, values };
+	return { events, vars };
 }

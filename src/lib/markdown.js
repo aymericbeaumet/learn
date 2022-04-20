@@ -40,7 +40,7 @@ export function toJavaScript(md) {
 			case 'heading':
 				openComment();
 				code.push(' *  ');
-				code.push(pad(child.children[0].value.toUpperCase(), 80));
+				code.push(pad(child.children[0].value.toUpperCase(), 80).trimEnd());
 				code.push('\n *\n');
 				break;
 
