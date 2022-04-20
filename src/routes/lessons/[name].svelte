@@ -12,13 +12,13 @@
 
 	let value = '';
 	let frontmatter = {};
+	let done = false;
 
 	$: {
 		if (value) {
 			try {
 				const out = run(value);
-				const done = isMatch(out.values, frontmatter.expect);
-				console.log({ done, frontmatter, out });
+				done = done || isMatch(out.values, frontmatter.expect);
 			} catch (err) {
 				console.error(err);
 			}
@@ -52,6 +52,11 @@
 					switch (child.type) {
 						case 'yaml':
 							frontmatter = yaml.load(child.value, 'utf8');
+							break;
+
+						case 'thematicBreak':
+							closeComment();
+							openComment();
 							break;
 
 						case 'heading':
@@ -139,4 +144,30 @@
 	}
 </script>
 
-<Editor bind:value />
+<div class="container">
+	<nav>
+		<button>Prev</button>
+	</nav>
+	<main>
+		<Editor width="800px" height="600px" bind:value readOnly={done} />
+	</main>
+	<nav>
+		<button title="⌘ + Enter" disabled={!done}>Next</button>
+	</nav>
+</div>
+
+<style>
+	.container {
+		display: flex;
+	}
+
+	nav {
+		width: 50px;
+		display: flex;
+		justify-content: center;
+	}
+
+	main {
+		border: 1px solid gray;
+	}
+</style>
