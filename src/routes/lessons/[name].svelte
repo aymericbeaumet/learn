@@ -21,15 +21,16 @@
 	export let code;
 	export let frontmatter;
 
-	const lessonName = $page.params['name'];
-	const lessonIdx = lessonsIndex.indexOf(lessonName);
+	const lessonIdx = lessonsIndex.indexOf($page.params.name);
 
 	let done = false;
 
 	$: {
 		try {
-			const { values } = execute(code);
-			done = done || isMatch(values, frontmatter.expect);
+			if (!done) {
+				const { values } = execute(code);
+				done = isMatch(values, frontmatter.expect);
+			}
 		} catch (err) {
 			console.error(err);
 		}

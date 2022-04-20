@@ -3,6 +3,7 @@ import remarkFrontmatter from 'remark-frontmatter';
 import remarkParse from 'remark-parse';
 import remarkStringify from 'remark-stringify';
 import yaml from 'js-yaml';
+import { pad } from 'lodash';
 
 export function toJavaScript(md) {
 	const ast = unified().use(remarkParse).use(remarkFrontmatter, ['yaml']).parse(md);
@@ -38,9 +39,9 @@ export function toJavaScript(md) {
 
 			case 'heading':
 				openComment();
-				code.push(' * ');
-				code.push(child.children[0].value.toUpperCase());
-				code.push('\n\n');
+				code.push(' *  ');
+				code.push(pad(child.children[0].value.toUpperCase(), 80));
+				code.push('\n *\n');
 				break;
 
 			case 'paragraph':
@@ -51,10 +52,10 @@ export function toJavaScript(md) {
 						.stringify(child)
 						.trimEnd()
 						.split('\n')
-						.map((line) => ` * ${line}`)
+						.map((line) => ` *  ${line}`)
 						.join('\n')
 				);
-				code.push('\n\n');
+				code.push('\n *\n');
 				break;
 
 			case 'code':
