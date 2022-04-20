@@ -123,10 +123,10 @@ function run(code) {
     {},
     // console
     {
-      log(...args) {
+      log: function (...args) {
         out.events.push([new Date(), "console.log", args]);
       },
-      error(...args) {
+      error: function (...args) {
         out.events.push([new Date(), "console.error", args]);
       },
     },
