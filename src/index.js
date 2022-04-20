@@ -1,22 +1,27 @@
-import * as monaco from "monaco-editor";
-import { remark } from "remark";
 import * as babelParser from "@babel/parser";
+import * as monaco from "monaco-editor";
+import remarkFrontmatter from "remark-frontmatter";
+import remarkParse from "remark-parse";
+import remarkStringify from "remark-stringify";
+import { unified } from "unified";
+import yaml from "js-yaml";
 
 const editorDom = document.getElementById("editor");
 const editor = monaco.editor.create(editorDom, {
   language: "javascript",
-  minimap: { enabled: false },
   folding: false,
-  guides: {
-    indentation: false,
-  },
+  fontSize: 14,
+  guides: { indentation: false },
+  minimap: { enabled: false },
 });
+
 const editorModel = editor.getModel();
+let frontmatter = {};
 
 editorModel.onDidChangeContent(() => {
   try {
     const out = run(editorModel.getValue());
-    console.log(JSON.stringify(out, null, 2));
+    console.log(JSON.stringify({ frontmatter, out }, null, 2));
   } catch (err) {
     console.error(err);
   }
@@ -24,7 +29,9 @@ editorModel.onDidChangeContent(() => {
 
 fetch("/lessons/000-intro.md")
   .then((res) => res.text())
-  .then((text) => remark.parse(text))
+  .then((text) =>
+    unified().use(remarkParse).use(remarkFrontmatter, ["yaml"]).parse(text)
+  )
   .then((markdown) => {
     let code = [];
 
@@ -43,10 +50,13 @@ fetch("/lessons/000-intro.md")
       }
     };
 
+    frontmatter = {};
     markdown.children.forEach((child) => {
-      console.log(child);
-
       switch (child.type) {
+        case "yaml":
+          frontmatter = yaml.load(child.value, "utf8");
+          break;
+
         case "heading":
           openComment();
           code.push(" * ");
@@ -57,7 +67,8 @@ fetch("/lessons/000-intro.md")
         case "paragraph":
           openComment();
           code.push(
-            remark
+            unified()
+              .use(remarkStringify)
               .stringify(child)
               .trimEnd()
               .split("\n")
@@ -85,59 +96,45 @@ fetch("/lessons/000-intro.md")
 function run(code) {
   const out = {
     events: [],
-    __assert__: {},
-    __track__: {},
+    values: {},
   };
 
-  try {
-    const ast = babelParser.parse(code, {
-      sourceType: "script",
-      attachComment: false,
-      strictMode: true,
-    });
+  const ast = babelParser.parse(code, {
+    sourceType: "script",
+    attachComment: false,
+    strictMode: true,
+  });
 
-    ast.program.body.forEach((node) => {
-      if (node.type === "VariableDeclaration") {
-        node.declarations.forEach((declaration) => {
-          code += `\n/**/;__internal__.track(${JSON.stringify(
-            declaration.id.name
-          )}, ${declaration.id.name});`;
-        });
-      }
-    });
+  ast.program.body.forEach((node) => {
+    if (node.type === "VariableDeclaration") {
+      node.declarations.forEach((declaration) => {
+        code += `\n/**/;__track__(${JSON.stringify(declaration.id.name)}, ${
+          declaration.id.name
+        });`;
+      });
+    }
+  });
 
-    const fn = new Function(
-      "window",
-      "document",
-      "console",
-      "__assert__",
-      "__track__",
-      code
-    );
-    fn(
-      // window
-      {},
-      // document
-      {},
-      // console
-      {
-        log(...args) {
-          out.events.push([new Date(), "console.log", args]);
-        },
-        error(...args) {
-          out.events.push([new Date(), "console.error", args]);
-        },
+  const fn = new Function("window", "document", "console", "__track__", code);
+  fn(
+    // window
+    {},
+    // document
+    {},
+    // console
+    {
+      log(...args) {
+        out.events.push([new Date(), "console.log", args]);
       },
-      // __assert__
-      function (ident, value) {
-        out.__assert__[ident] = value;
+      error(...args) {
+        out.events.push([new Date(), "console.error", args]);
       },
-      // __track__
-      function (ident, value) {
-        out.__track__[ident] = value;
-      }
-    );
-  } finally {
-    return out;
-  }
+    },
+    // __track__
+    function (ident, value) {
+      out.values[ident] = value;
+    }
+  );
+
+  return out;
 }

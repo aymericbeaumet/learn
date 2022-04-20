@@ -6,8 +6,11 @@
   },
   "dependencies": {
     "@babel/parser": "^7.17.9",
+    "js-yaml": "^4.1.0",
     "monaco-editor": "^0.33.0",
-    "remark": "^14.0.2"
+    "remark-frontmatter": "^4.0.1",
+    "remark-parse": "^10.0.1",
+    "remark-stringify": "^10.0.2"
   },
   "devDependencies": {
     "css-loader": "^6.7.1",
