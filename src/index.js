@@ -27,37 +27,40 @@ fetch("/lessons/000-intro.md")
   .then((text) => remark.parse(text))
   .then((markdown) => {
     let comment_open = false;
-    let js = "";
+    let code = [];
 
     markdown.children.forEach((child) => {
       switch (child.type) {
         case "code":
           if (comment_open) {
-            js += " */\n\n";
+            code.push(" */\n\n");
             comment_open = false;
           }
-          js += child.value + "\n\n";
+          code.push(child.value);
+          code.push("\n\n");
           break;
         default:
           if (!comment_open) {
-            js += "/*\n";
+            code.push("/*\n");
             comment_open = true;
           }
-          js += remark
-            .stringify(child)
-            .split("\n")
-            .map((line) => ` *  ${line}`)
-            .join("\n");
-          js += "\n";
+          code.push(
+            remark
+              .stringify(child)
+              .split("\n")
+              .map((line) => ` *  ${line}`)
+              .join("\n")
+          );
+          code.push("\n");
           break;
       }
     });
     if (comment_open) {
-      js += " */\n\n";
+      code.push(" */\n\n");
       comment_open = false;
     }
 
-    editorModel.setValue(js);
+    editorModel.setValue(code.join("").trimEnd());
   });
 
 function run(code) {
