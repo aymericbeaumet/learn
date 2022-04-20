@@ -1,3 +1,3 @@
 #!/bin/sh
 
-jq -nc '$ARGS.positional' --args "$(echo ./static/data/lessons/* | cut -d/ -f5- | cut -d. -f-1)" >./src/assets/lessons-index.json
+find ./static/data/lessons -type f -exec basename -s .md {} \; | jq -R -s -c 'split("\n")[:-1]' >./src/lib/assets/lessons-index.json
