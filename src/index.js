@@ -26,47 +26,67 @@ fetch("/lessons/000-intro.md")
   .then((res) => res.text())
   .then((text) => remark.parse(text))
   .then((markdown) => {
-    let comment_open = false;
     let code = [];
 
+    let isComment = false;
+    const openComment = () => {
+      if (!isComment) {
+        isComment = true;
+        code.push("/*\n");
+      }
+    };
+    const closeComment = () => {
+      if (isComment) {
+        isComment = false;
+        code.pop(); // remove the last newline
+        code.push("\n */\n\n");
+      }
+    };
+
     markdown.children.forEach((child) => {
+      console.log(child);
+
       switch (child.type) {
-        case "code":
-          if (comment_open) {
-            code.push(" */\n\n");
-            comment_open = false;
-          }
-          code.push(child.value);
+        case "heading":
+          openComment();
+          code.push(" * ");
+          code.push(child.children[0].value.toUpperCase());
           code.push("\n\n");
           break;
-        default:
-          if (!comment_open) {
-            code.push("/*\n");
-            comment_open = true;
-          }
+
+        case "paragraph":
+          openComment();
           code.push(
             remark
               .stringify(child)
+              .trimEnd()
               .split("\n")
-              .map((line) => ` *  ${line}`)
+              .map((line) => ` * ${line}`)
               .join("\n")
           );
-          code.push("\n");
+          code.push("\n\n");
           break;
+
+        case "code":
+          closeComment();
+          code.push(child.value);
+          code.push("\n\n");
+          break;
+
+        default:
+          throw new Error(`unsupported markdown child type ${child.type}`);
       }
     });
-    if (comment_open) {
-      code.push(" */\n\n");
-      comment_open = false;
-    }
 
-    editorModel.setValue(code.join("").trimEnd());
+    closeComment();
+    editorModel.setValue(code.join("").trim());
   });
 
 function run(code) {
   const out = {
     events: [],
-    variables: {},
+    __assert__: {},
+    __track__: {},
   };
 
   try {
@@ -90,7 +110,8 @@ function run(code) {
       "window",
       "document",
       "console",
-      "__internal__",
+      "__assert__",
+      "__track__",
       code
     );
     fn(
@@ -107,11 +128,13 @@ function run(code) {
           out.events.push([new Date(), "console.error", args]);
         },
       },
-      // __internal__
-      {
-        track(ident, value) {
-          out.variables[ident] = value;
-        },
+      // __assert__
+      function (ident, value) {
+        out.__assert__[ident] = value;
+      },
+      // __track__
+      function (ident, value) {
+        out.__track__[ident] = value;
       }
     );
   } finally {
