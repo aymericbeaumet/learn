@@ -14,7 +14,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Editor from '$lib/components/Editor.svelte';
-	import { isMatch } from 'lodash';
+	import isMatch from 'lodash/isMatch.js';
 	import { execute } from '$lib/javascript';
 	import lessonsIndex from '$lib/assets/lessons-index.json';
 

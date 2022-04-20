@@ -3,7 +3,7 @@ import remarkFrontmatter from 'remark-frontmatter';
 import remarkParse from 'remark-parse';
 import remarkStringify from 'remark-stringify';
 import yaml from 'js-yaml';
-import { pad } from 'lodash';
+import pad from 'lodash/pad.js';
 
 export function toJavaScript(md) {
 	const ast = unified().use(remarkParse).use(remarkFrontmatter, ['yaml']).parse(md);
