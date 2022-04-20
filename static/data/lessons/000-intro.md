@@ -19,8 +19,10 @@ devices, etc. It has a simple yet expressive syntax and allows for a great
 learning experience as you can immediately start playing with it to create your
 own projects.
 
-What you are reading right now is a comment, it is ignored when the code is
-executed. Comments are useful to explain what your code is doing.
+The entirety of the course will happen in this editor. This includes both the
+instructions and the code you will write. What you are reading right now is a
+comment, it is ignored when the code is executed. Comments are useful to explain
+what your code is doing.
 
 Alright, I think we are good to move on. But first I need to know wheter you are
 ready. In the code below, replace `false` with `true` to go to the next lesson!

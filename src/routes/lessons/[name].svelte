@@ -145,9 +145,6 @@
 </script>
 
 <div class="container">
-	<nav>
-		<button>Prev</button>
-	</nav>
 	<main>
 		<Editor width="800px" height="600px" bind:value readOnly={done} />
 	</main>
@@ -161,13 +158,22 @@
 		display: flex;
 	}
 
+	main {
+		border: 1px solid gray;
+	}
+
 	nav {
 		width: 50px;
 		display: flex;
 		justify-content: center;
 	}
 
-	main {
-		border: 1px solid gray;
+	button {
+		background-color: green;
+		color: white;
+	}
+
+	button:disabled {
+		display: none;
 	}
 </style>
