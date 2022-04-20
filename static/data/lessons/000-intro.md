@@ -17,9 +17,6 @@ literally present everywhere: in your web-browser, in the servers, in embedded
 devices, etc. It has a simple syntax and allows for a great learning experience
 as you can immediately start playing with it to create your own projects.
 
-Coding mostly happens in code editors, like the one you are reading from right
-now. Editors are useful as they assist you while you are coding.
-
 What you are reading right now is a comment, it will be ignored when the code is
 executed. Comments are very useful to explain what your code is doing.
 
