@@ -6,6 +6,10 @@ const editorDom = document.getElementById("editor");
 const editor = monaco.editor.create(editorDom, {
   language: "javascript",
   minimap: { enabled: false },
+  folding: false,
+  guides: {
+    indentation: false,
+  },
 });
 const editorModel = editor.getModel();
 
@@ -29,23 +33,27 @@ fetch("/lessons/000-intro.md")
       switch (child.type) {
         case "code":
           if (comment_open) {
-            js += "\n*/\n";
+            js += " */\n\n";
             comment_open = false;
           }
-          js += child.value;
+          js += child.value + "\n\n";
           break;
         default:
           if (!comment_open) {
-            js += "/*\n\n";
+            js += "/*\n";
             comment_open = true;
           }
-          js += remark.stringify(child);
+          js += remark
+            .stringify(child)
+            .split("\n")
+            .map((line) => ` *  ${line}`)
+            .join("\n");
           js += "\n";
           break;
       }
     });
     if (comment_open) {
-      js += "*/\n";
+      js += " */\n\n";
       comment_open = false;
     }
 
@@ -53,23 +61,57 @@ fetch("/lessons/000-intro.md")
   });
 
 function run(code) {
-  const ast = babelParser.parse(code, {
-    sourceType: "script",
-    attachComment: false,
-    errorRecovery: true,
-    strictMode: true,
-  });
-  console.log(ast);
+  const out = {
+    events: [],
+    variables: {},
+  };
 
-  const out = [];
+  try {
+    const ast = babelParser.parse(code, {
+      sourceType: "script",
+      attachComment: false,
+      strictMode: true,
+    });
 
-  // const _console = {
-  //   log: (...rest) => out.push([new Date(), "console.log", rest]),
-  //   error: (...rest) => out.push([new Date(), "console.error", rest]),
-  // };
-  //
-  // const fn = new Function("window", "document", "console", code);
-  // fn({ console: _console }, {}, _console);
+    ast.program.body.forEach((node) => {
+      if (node.type === "VariableDeclaration") {
+        node.declarations.forEach((declaration) => {
+          code += `\n/**/;__internal__.track(${JSON.stringify(
+            declaration.id.name
+          )}, ${declaration.id.name});`;
+        });
+      }
+    });
 
-  return out;
+    const fn = new Function(
+      "window",
+      "document",
+      "console",
+      "__internal__",
+      code
+    );
+    fn(
+      // window
+      {},
+      // document
+      {},
+      // console
+      {
+        log(...args) {
+          out.events.push([new Date(), "console.log", args]);
+        },
+        error(...args) {
+          out.events.push([new Date(), "console.error", args]);
+        },
+      },
+      // __internal__
+      {
+        track(ident, value) {
+          out.variables[ident] = value;
+        },
+      }
+    );
+  } finally {
+    return out;
+  }
 }
