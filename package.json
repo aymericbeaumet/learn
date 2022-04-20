@@ -2,8 +2,8 @@
 	"name": "learn",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "svelte-kit dev",
-		"build": "svelte-kit build",
+		"dev": "./scripts/generate-lessons-index.sh && svelte-kit dev",
+		"build": "./scripts/generate-lessons-index.sh && svelte-kit build",
 		"package": "svelte-kit package",
 		"preview": "svelte-kit preview",
 		"prepare": "svelte-kit sync",
