@@ -8,14 +8,13 @@
 
 		if (res.ok) {
 			const { code, frontmatter } = await res.text().then(toJavaScript);
+			const done = false;
+			const idx = lessonsIndex.indexOf(params.name);
+			const prevLesson = idx - 1 >= 0 ? `/lessons/${lessonsIndex[idx - 1]}` : null;
+			const nextLesson = idx + 1 < lessonsIndex.length ? `/lessons/${lessonsIndex[idx + 1]}` : null;
 			return {
 				status: res.status,
-				props: {
-					code,
-					frontmatter,
-					done: false,
-					lessonIdx: lessonsIndex.indexOf(params.name)
-				}
+				props: { code, frontmatter, done, prevLesson, nextLesson }
 			};
 		} else {
 			return {
@@ -27,15 +26,21 @@
 </script>
 
 <script>
-	import { goto } from '$app/navigation';
+	import { goto, prefetchRoutes } from '$app/navigation';
 	import Editor from '$lib/components/Editor.svelte';
 	import isMatch from 'lodash/isMatch.js';
 	import { execute } from '$lib/javascript';
+	import { browser } from '$app/env';
 
 	export let code;
 	export let frontmatter;
 	export let done;
-	export let lessonIdx;
+	export let prevLesson;
+	export let nextLesson;
+
+	$: if (browser) {
+		prefetchRoutes([prevLesson, nextLesson].filter(Boolean));
+	}
 
 	$: {
 		if (!done) {
@@ -50,22 +55,16 @@
 </script>
 
 <div class="container">
-	<nav>
-		<button
-			disabled={!(lessonIdx > 0)}
-			on:click={() => goto(`/lessons/${lessonsIndex[lessonIdx - 1]}`)}>Prev</button
-		>
+	<nav class="prev">
+		<button disabled={!prevLesson} on:click={() => goto(prevLesson)}>Prev</button>
 	</nav>
 
 	<main>
 		<Editor width="800px" height="600px" bind:value={code} readOnly={done} />
 	</main>
 
-	<nav>
-		<button
-			disabled={!(done && lessonIdx < lessonsIndex.length - 1)}
-			on:click={() => goto(`/lessons/${lessonsIndex[lessonIdx + 1]}`)}>Next</button
-		>
+	<nav class="next">
+		<button disabled={!done || !nextLesson} on:click={() => goto(nextLesson)}>Next</button>
 	</nav>
 </div>
 
@@ -84,7 +83,12 @@
 		justify-content: center;
 	}
 
-	button {
+	.prev button {
+		background-color: lightgrey;
+		color: black;
+	}
+
+	.next button {
 		background-color: green;
 		color: white;
 	}
