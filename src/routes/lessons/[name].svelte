@@ -52,11 +52,27 @@
 			}
 		}
 	}
+
+	$: disallowPrev = !prevLesson;
+	$: disallowNext = !done || !nextLesson;
+
+	function onKeyDown(ev) {
+		if (ev.key === 'Enter' && ev.metaKey) {
+			ev.preventDefault();
+			ev.stopPropagation();
+			if (!disallowNext) {
+				goto(nextLesson);
+			}
+			return;
+		}
+	}
 </script>
+
+<svelte:window on:keydown={onKeyDown} />
 
 <div class="container">
 	<nav class="prev">
-		<button disabled={!prevLesson} on:click={() => goto(prevLesson)}>Prev</button>
+		<button disabled={disallowPrev} on:click={() => goto(prevLesson)}>Prev</button>
 	</nav>
 
 	<main>
@@ -64,7 +80,8 @@
 	</main>
 
 	<nav class="next">
-		<button disabled={!done || !nextLesson} on:click={() => goto(nextLesson)}>Next</button>
+		<button disabled={disallowNext} on:click={() => goto(nextLesson)} title="⌘ + Enter">Next</button
+		>
 	</nav>
 </div>
 
