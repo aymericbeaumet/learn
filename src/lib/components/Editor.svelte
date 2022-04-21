@@ -2,8 +2,6 @@
 	import { onMount } from 'svelte';
 	import TypeScriptWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
 
-	export let width;
-	export let height;
 	export let value;
 	export let readOnly = false;
 
@@ -29,19 +27,21 @@
 		self.MonacoEnvironment = {
 			getWorker: function () {
 				return new TypeScriptWorker({ type: 'module' });
-			}
+			},
 		};
 
 		const Monaco = await import('monaco-editor');
 		editor = Monaco.editor.create(domElement, {
-			readOnly,
-			value,
-			language: 'javascript',
-			theme: 'vs-dark',
+			automaticLayout: true,
 			folding: false,
 			fontSize: 13,
 			guides: { indentation: false },
-			minimap: { enabled: false }
+			language: 'javascript',
+			minimap: { enabled: false },
+			readOnly,
+			renderFinalNewline: false,
+			scrollBeyondLastLine: false,
+			value,
 		});
 
 		const editorModel = editor.getModel();
@@ -56,4 +56,11 @@
 	});
 </script>
 
-<div bind:this={domElement} style={`width: ${width}; height: ${height}`} />
+<div bind:this={domElement} />
+
+<style>
+	div {
+		width: 100%;
+		height: 100%;
+	}
+</style>

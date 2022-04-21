@@ -7,7 +7,7 @@ export function execute(code) {
 	const ast = babelParser.parse(code, {
 		sourceType: 'script',
 		attachComment: false,
-		strictMode: true
+		strictMode: true,
 	});
 
 	ast.program.body.forEach((node) => {
@@ -31,12 +31,12 @@ export function execute(code) {
 			},
 			error: function (...args) {
 				events.push([new Date(), 'console.error', args]);
-			}
+			},
 		},
 		// __track__
 		function (ident, value) {
 			vars[ident] = value;
-		}
+		},
 	);
 
 	return { events, vars };

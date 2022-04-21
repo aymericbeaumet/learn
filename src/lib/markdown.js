@@ -53,7 +53,7 @@ export function toJavaScript(md) {
 						.trimEnd()
 						.split('\n')
 						.map((line) => ` *  ${line}`)
-						.join('\n')
+						.join('\n'),
 				);
 				code.push('\n *\n');
 				break;
@@ -73,6 +73,6 @@ export function toJavaScript(md) {
 
 	return {
 		code: code.join('').trim(),
-		frontmatter
+		frontmatter,
 	};
 }

@@ -1,32 +1,38 @@
 <script context="module">
 	import { toJavaScript } from '$lib/markdown';
 	import lessonsIndex from '$lib/assets/lessons-index.json';
+	import Modal from '$lib/components/Modal.svelte';
 
 	export async function load({ params, fetch }) {
 		const url = `/data/lessons/${params.name}.md`;
 		const res = await fetch(url);
 
+		const idx = lessonsIndex.indexOf(params.name);
+
 		if (res.ok) {
 			const { code, frontmatter } = await res.text().then(toJavaScript);
 			const done = false;
-			const idx = lessonsIndex.indexOf(params.name);
-			const prevLesson = idx - 1 >= 0 ? `/lessons/${lessonsIndex[idx - 1]}` : null;
 			const nextLesson = idx + 1 < lessonsIndex.length ? `/lessons/${lessonsIndex[idx + 1]}` : null;
 			return {
 				status: res.status,
-				props: { code, frontmatter, done, prevLesson, nextLesson }
+				props: {
+					code,
+					frontmatter,
+					done,
+					nextLesson,
+				},
 			};
 		} else {
 			return {
 				status: res.status,
-				error: new Error(`could not load ${url}`)
+				error: new Error(`could not load ${url}`),
 			};
 		}
 	}
 </script>
 
 <script>
-	import { goto, prefetchRoutes } from '$app/navigation';
+	import { goto, prefetch } from '$app/navigation';
 	import Editor from '$lib/components/Editor.svelte';
 	import isMatch from 'lodash/isMatch.js';
 	import { execute } from '$lib/javascript';
@@ -35,11 +41,10 @@
 	export let code;
 	export let frontmatter;
 	export let done;
-	export let prevLesson;
 	export let nextLesson;
 
 	$: if (browser) {
-		prefetchRoutes([prevLesson, nextLesson].filter(Boolean));
+		prefetch(nextLesson);
 	}
 
 	$: {
@@ -53,64 +58,59 @@
 		}
 	}
 
-	$: disallowPrev = !prevLesson;
-	$: disallowNext = !done || !nextLesson;
-
-	function onKeyDown(ev) {
-		if (ev.key === 'Enter' && ev.metaKey) {
-			ev.preventDefault();
-			ev.stopPropagation();
-			if (!disallowNext) {
-				goto(nextLesson);
-			}
+	function onKeyDown(event) {
+		if (event.key === 'Enter' && event.metaKey) {
+			next(event);
 			return;
+		}
+	}
+
+	function next(event) {
+		event.preventDefault();
+		event.stopPropagation();
+
+		if (done && nextLesson) {
+			goto(nextLesson);
 		}
 	}
 </script>
 
 <svelte:window on:keydown={onKeyDown} />
 
-<div class="container">
-	<nav class="prev">
-		<button disabled={disallowPrev} on:click={() => goto(prevLesson)}>Prev</button>
-	</nav>
+<main>
+	<Editor bind:value={code} readOnly={done} />
+	{#if done}
+		<Modal>
+			<div>
+				<h1>Congratulations!</h1>
 
-	<main>
-		<Editor width="800px" height="600px" bind:value={code} readOnly={done} />
-	</main>
-
-	<nav class="next">
-		<button disabled={disallowNext} on:click={() => goto(nextLesson)} title="⌘ + Enter">Next</button
-		>
-	</nav>
-</div>
+				{#if nextLesson}
+					<form on:submit={next}>
+						<input type="submit" value="Move on to the next lesson" title="⌘ + Enter" />
+					</form>
+				{:else}
+					<p>You have finished the course!</p>
+				{/if}
+			</div>
+		</Modal>
+	{/if}
+</main>
 
 <style>
-	.container {
-		display: flex;
-	}
-
 	main {
-		border: 1px solid gray;
+		width: 100%;
+		height: 100vh;
 	}
 
-	nav {
-		width: 50px;
-		display: flex;
-		justify-content: center;
-	}
-
-	.prev button {
+	div {
 		background-color: lightgrey;
-		color: black;
+		border-radius: 10px;
+		padding: 10px 20px;
 	}
 
-	.next button {
-		background-color: green;
-		color: white;
-	}
-
-	button:disabled {
-		display: none;
+	input[type='submit'] {
+		border-radius: 5px;
+		padding: 10px 20px;
+		background: green;
 	}
 </style>
