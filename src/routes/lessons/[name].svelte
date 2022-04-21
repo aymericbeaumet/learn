@@ -1,5 +1,6 @@
 <script context="module">
 	import { toJavaScript } from '$lib/markdown';
+	import lessonsIndex from '$lib/assets/lessons-index.json';
 
 	export async function load({ params, fetch }) {
 		const url = `/data/lessons/${params.name}.md`;
@@ -9,7 +10,12 @@
 			const { code, frontmatter } = await res.text().then(toJavaScript);
 			return {
 				status: res.status,
-				props: { code, frontmatter }
+				props: {
+					code,
+					frontmatter,
+					done: false,
+					lessonIdx: lessonsIndex.indexOf(params.name)
+				}
 			};
 		} else {
 			return {
@@ -22,24 +28,23 @@
 
 <script>
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
 	import Editor from '$lib/components/Editor.svelte';
 	import isMatch from 'lodash/isMatch.js';
 	import { execute } from '$lib/javascript';
-	import lessonsIndex from '$lib/assets/lessons-index.json';
 
 	export let code;
 	export let frontmatter;
-
-	let lessonIdx = lessonsIndex.indexOf($page.params.name);
-	let done = false;
+	export let done;
+	export let lessonIdx;
 
 	$: {
-		try {
-			const { vars } = execute(code);
-			done = done || isMatch(vars, frontmatter.vars || {});
-		} catch (err) {
-			console.error(err);
+		if (!done) {
+			try {
+				const { vars } = execute(code);
+				done = isMatch(vars, frontmatter.vars || {});
+			} catch (err) {
+				console.error(err);
+			}
 		}
 	}
 </script>
@@ -48,7 +53,7 @@
 	<nav>
 		<button
 			disabled={!(lessonIdx > 0)}
-			on:click|once={() => goto(`/lessons/${lessonsIndex[lessonIdx - 1]}`)}>Prev</button
+			on:click={() => goto(`/lessons/${lessonsIndex[lessonIdx - 1]}`)}>Prev</button
 		>
 	</nav>
 
@@ -59,7 +64,7 @@
 	<nav>
 		<button
 			disabled={!(done && lessonIdx < lessonsIndex.length - 1)}
-			on:click|once={() => goto(`/lessons/${lessonsIndex[lessonIdx + 1]}`)}>Next</button
+			on:click={() => goto(`/lessons/${lessonsIndex[lessonIdx + 1]}`)}>Next</button
 		>
 	</nav>
 </div>
