@@ -7,18 +7,25 @@
 		const url = `/data/lessons/${params.name}.md`;
 		const res = await fetch(url);
 
-		const idx = lessonsIndex.indexOf(params.name);
+		const lessonIndex = lessonsIndex.indexOf(params.name);
+		const lessonsCount = lessonsIndex.length;
 
 		if (res.ok) {
 			const { code, frontmatter } = await res.text().then(toJavaScript);
 			const done = false;
-			const nextLesson = idx + 1 < lessonsIndex.length ? `/lessons/${lessonsIndex[idx + 1]}` : null;
+			const previousLesson =
+				lessonIndex - 1 >= 0 ? `/lessons/${lessonsIndex[lessonIndex - 1]}` : null;
+			const nextLesson =
+				lessonIndex + 1 < lessonsIndex.length ? `/lessons/${lessonsIndex[lessonIndex + 1]}` : null;
 			return {
 				status: res.status,
 				props: {
 					code,
 					frontmatter,
 					done,
+					lessonIndex,
+					lessonsCount,
+					previousLesson,
 					nextLesson,
 				},
 			};
@@ -41,6 +48,9 @@
 	export let code;
 	export let frontmatter;
 	export let done;
+	export let lessonIndex;
+	export let lessonsCount;
+	export let previousLesson;
 	export let nextLesson;
 
 	$: if (browser) {
@@ -58,18 +68,32 @@
 		}
 	}
 
+	$: canPrevious = previousLesson;
+	$: canNext = done && nextLesson;
+
 	function onKeyDown(event) {
-		if (event.key === 'Enter' && event.metaKey) {
+		if (event.key === 'Enter') {
 			next(event);
 			return;
 		}
 	}
 
-	function next(event) {
-		event.preventDefault();
-		event.stopPropagation();
+	function previous(event) {
+		if (event) {
+			event.preventDefault();
+			event.stopPropagation();
+		}
+		if (canPrevious) {
+			goto(previousLesson);
+		}
+	}
 
-		if (done && nextLesson) {
+	function next(event) {
+		if (event) {
+			event.preventDefault();
+			event.stopPropagation();
+		}
+		if (canNext) {
 			goto(nextLesson);
 		}
 	}
@@ -77,11 +101,24 @@
 
 <svelte:window on:keydown={onKeyDown} />
 
-<main>
-	<Editor bind:value={code} readOnly={done} />
+<div class="container">
+	<main>
+		<Editor bind:value={code} readOnly={done} />
+	</main>
+
+	<aside>
+		{#if previousLesson}
+			<button on:click={previous} disabled={!canPrevious}>Previous</button>
+		{/if}
+		<span>{lessonIndex + 1} / {lessonsCount}</span>
+		{#if nextLesson}
+			<button on:click={next} disabled={!canNext}>Next</button>
+		{/if}
+	</aside>
+
 	{#if done}
 		<Modal>
-			<div>
+			<div class="modal">
 				<h1>Congratulations!</h1>
 
 				{#if nextLesson}
@@ -94,21 +131,36 @@
 			</div>
 		</Modal>
 	{/if}
-</main>
+</div>
 
 <style>
-	main {
+	.container {
 		width: 100%;
 		height: 100vh;
+		display: flex;
+		flex-direction: column;
 	}
 
-	div {
+	main {
+		flex-grow: 1;
+	}
+
+	aside {
+		height: 40px;
+		border-top: 5px solid green;
+		background: lightgrey;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.modal {
 		background-color: lightgrey;
 		border-radius: 10px;
 		padding: 10px 20px;
 	}
 
-	input[type='submit'] {
+	.modal input[type='submit'] {
 		border-radius: 5px;
 		padding: 10px 20px;
 		background: green;

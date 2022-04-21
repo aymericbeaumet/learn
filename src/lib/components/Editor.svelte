@@ -12,6 +12,7 @@
 		editor.setValue(value);
 		editor.setScrollPosition({ scrollTop: 0 });
 		editor.setPosition({ column: 1, lineNumber: 1 });
+		editor.focus();
 	}
 
 	$: if (editor) {
@@ -44,8 +45,9 @@
 			value,
 		});
 
-		const editorModel = editor.getModel();
+		editor.focus();
 
+		const editorModel = editor.getModel();
 		editorModel.onDidChangeContent(() => {
 			value = editorModel.getValue();
 		});
