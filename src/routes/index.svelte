@@ -3,6 +3,6 @@
 	import { onMount } from 'svelte';
 
 	onMount(() => {
-		goto('/lessons');
+		goto(`/lessons/${lessonsIndex[0]}`);
 	});
 </script>
