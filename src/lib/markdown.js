@@ -1,12 +1,17 @@
 import { unified } from 'unified';
 import remarkFrontmatter from 'remark-frontmatter';
 import remarkParse from 'remark-parse';
+import remarkGfm from 'remark-gfm';
 import remarkStringify from 'remark-stringify';
 import yaml from 'js-yaml';
 import pad from 'lodash/pad.js';
 
-export function toJavaScript(md) {
-	const ast = unified().use(remarkParse).use(remarkFrontmatter, ['yaml']).parse(md);
+export function toJavaScript(markdown) {
+	const ast = unified()
+		.use(remarkParse)
+		.use(remarkFrontmatter, ['yaml'])
+		.use(remarkGfm)
+		.parse(markdown);
 
 	let code = [];
 	let frontmatter = {};
@@ -30,6 +35,40 @@ export function toJavaScript(md) {
 		switch (child.type) {
 			case 'yaml':
 				frontmatter = yaml.load(child.value, 'utf8');
+				break;
+
+			case 'list':
+				console.log(child);
+				closeComment();
+				code.push('// Task');
+				if (child.children.length >= 2) {
+					code.push('s');
+				}
+				code.push(':\n');
+				code.push(
+					unified()
+						.use(remarkStringify)
+						.stringify(child)
+						.trimEnd()
+						.split('\n')
+						.map((line) => `// - ${line.slice(4)}`)
+						.join('\n'),
+				);
+				code.push('\n\n');
+				break;
+
+			case 'blockquote':
+				closeComment();
+				code.push(
+					unified()
+						.use(remarkStringify)
+						.stringify(child)
+						.trimEnd()
+						.split('\n')
+						.map((line) => `// ${line.slice(2)}`)
+						.join('\n'),
+				);
+				code.push('\n\n');
 				break;
 
 			case 'thematicBreak':
