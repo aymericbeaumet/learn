@@ -12,6 +12,8 @@
 
 	$: if (editor && value !== editor.getValue()) {
 		editor.setValue(value);
+		editor.setScrollPosition({ scrollTop: 0 });
+		editor.setPosition({ column: 1, lineNumber: 1 });
 	}
 
 	$: if (editor) {
@@ -35,11 +37,13 @@
 			readOnly,
 			value,
 			language: 'javascript',
+			theme: 'vs-dark',
 			folding: false,
 			fontSize: 13,
 			guides: { indentation: false },
 			minimap: { enabled: false }
 		});
+
 		const editorModel = editor.getModel();
 
 		editorModel.onDidChangeContent(() => {

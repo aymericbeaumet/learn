@@ -1,3 +1,4 @@
 # Variables
 
-Congratulations! You just touched your first piece of JavaScript code.
+Congratulations! You've just edited your first piece of JavaScript. But what
+have you done exactly?
