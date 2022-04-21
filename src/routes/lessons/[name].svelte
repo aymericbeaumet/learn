@@ -72,7 +72,7 @@
 	$: canNext = done && nextLesson;
 
 	function onKeyDown(event) {
-		if (event.key === 'Enter') {
+		if (event.metaKey && event.key === 'Enter') {
 			next(event);
 			return;
 		}
