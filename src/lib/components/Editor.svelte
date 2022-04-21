@@ -4,14 +4,24 @@
 
 	export let width;
 	export let height;
+	export let value;
 	export let readOnly = false;
-	export let value = '';
 
 	let editor = null;
 	let domElement = null;
 
-	$: editor && (editor.getModel().value = value);
-	$: editor && editor.updateOptions({ readOnly });
+	$: if (editor && value !== editor.getValue()) {
+		editor.setValue(value);
+	}
+
+	$: if (editor) {
+		if (readOnly) {
+			document.activeElement.blur();
+			editor.updateOptions({ readOnly: true });
+		} else {
+			editor.updateOptions({ readOnly: false });
+		}
+	}
 
 	onMount(async () => {
 		self.MonacoEnvironment = {

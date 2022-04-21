@@ -2,11 +2,21 @@
 	import { toJavaScript } from '$lib/markdown';
 
 	export async function load({ params, fetch }) {
-		const res = await fetch(`/data/lessons/${params.name}.md`);
-		return {
-			status: res.status,
-			props: res.ok && (await res.text().then(toJavaScript))
-		};
+		const url = `/data/lessons/${params.name}.md`;
+		const res = await fetch(url);
+
+		if (res.ok) {
+			const { code, frontmatter } = await res.text().then(toJavaScript);
+			return {
+				status: res.status,
+				props: { code, frontmatter }
+			};
+		} else {
+			return {
+				status: res.status,
+				error: new Error(`could not load ${url}`)
+			};
+		}
 	}
 </script>
 
@@ -21,16 +31,13 @@
 	export let code;
 	export let frontmatter;
 
-	const lessonIdx = lessonsIndex.indexOf($page.params.name);
-
+	let lessonIdx = lessonsIndex.indexOf($page.params.name);
 	let done = false;
 
 	$: {
 		try {
-			if (!done) {
-				const { vars } = execute(code);
-				done = isMatch(vars, frontmatter.vars || {});
-			}
+			const { vars } = execute(code);
+			done = done || isMatch(vars, frontmatter.vars || {});
 		} catch (err) {
 			console.error(err);
 		}
@@ -38,12 +45,20 @@
 </script>
 
 <div class="container">
+	<nav>
+		<button
+			disabled={!(lessonIdx > 0)}
+			on:click|once={() => goto(`/lessons/${lessonsIndex[lessonIdx - 1]}`)}>Prev</button
+		>
+	</nav>
+
 	<main>
 		<Editor width="800px" height="600px" bind:value={code} readOnly={done} />
 	</main>
+
 	<nav>
 		<button
-			disabled={!(done && lessonIdx >= 0 && lessonIdx < lessonsIndex.length - 1)}
+			disabled={!(done && lessonIdx < lessonsIndex.length - 1)}
 			on:click|once={() => goto(`/lessons/${lessonsIndex[lessonIdx + 1]}`)}>Next</button
 		>
 	</nav>
