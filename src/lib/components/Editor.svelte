@@ -12,7 +12,6 @@
 		editor.setValue(value);
 		editor.setScrollPosition({ scrollTop: 0 });
 		editor.setPosition({ column: 1, lineNumber: 1 });
-		editor.focus();
 	}
 
 	$: if (editor) {
@@ -44,8 +43,6 @@
 			scrollBeyondLastLine: false,
 			value,
 		});
-
-		editor.focus();
 
 		const editorModel = editor.getModel();
 		editorModel.onDidChangeContent(() => {
