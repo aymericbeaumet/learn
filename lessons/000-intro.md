@@ -32,11 +32,11 @@ code, and they usually convey information that cannot be expressed otherwise.
 Comments are only useful for other programmers, they are ignored during the
 program execution.
 
-Alright! I think we are good to move on. Below you can find a piece of
-JavaScript code along with the first task of the course! Fulfill it to go to the
+Alright, I think we are good to move on. Below you can find a piece of
+JavaScript code along with the first task of the course. Fulfill it to go to the
 next lesson.
 
-- set `areYouReady` to `'yes`
+- set `areYouReady` to `'yes'`
 
 ```js
 let areYouReady = 'no';

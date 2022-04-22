@@ -11,4 +11,4 @@ you've just touched one of the most important pieces in programming: variables.
 
 lorem ipsum
 
-- create an empty variable named `dog`
+- declare a variable `dog` without a value
