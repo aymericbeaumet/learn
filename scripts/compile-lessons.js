@@ -150,9 +150,14 @@ export function compile(markdown) {
 				break;
 
 			case 'heading':
+				closeComment();
 				openComment();
 				code.push(' *  ');
-				code.push(pad(child.children[0].value.toUpperCase(), 80).trimEnd());
+				if (child.depth === 1) {
+					code.push(pad(child.children[0].value.toUpperCase(), 80).trimEnd());
+				} else {
+					code.push(child.children[0].value.toUpperCase());
+				}
 				code.push('\n *\n');
 				break;
 
