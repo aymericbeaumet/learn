@@ -96,15 +96,16 @@
 	</main>
 
 	<aside>
-		{#if previousLessonURL}
-			<button on:click={previous} disabled={!enablePrevious}>Previous</button>
-		{/if}
-		<span>
-			{lessonIndex + 1} / {lessonsCount}
-		</span>
-		{#if nextLessonURL}
-			<button on:click={next} disabled={!enableNext} class="next">Next</button>
-		{/if}
+		<div class="progress" style={`width: ${(lessonIndex / lessonsCount) * 100}%;`} />
+		<div class="menu">
+			{#if previousLessonURL}
+				<button on:click={previous} disabled={!enablePrevious}>Previous</button>
+			{/if}
+			<span />
+			{#if nextLessonURL}
+				<button on:click={next} disabled={!enableNext} class="next">Next</button>
+			{/if}
+		</div>
 	</aside>
 </div>
 
@@ -122,11 +123,21 @@
 
 	aside {
 		height: 40px;
-		border-top: 5px solid green;
 		background: lightgrey;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.progress {
+		background: green;
+		height: 4px;
+	}
+
+	.menu {
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		flex-grow: 1;
 	}
 
 	button.next:enabled {
