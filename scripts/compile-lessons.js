@@ -132,11 +132,7 @@ export function compile(markdown) {
 
 			case 'list':
 				closeComment();
-				code.push('// Task');
-				if (child.children.length >= 2) {
-					code.push('s');
-				}
-				code.push(':\n');
+				code.push('// Tasks:\n');
 				code.push(
 					unified()
 						.use(remarkStringify, { bullet: '-', listItemIndent: 'one' })
