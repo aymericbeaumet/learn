@@ -1,60 +1,47 @@
 <script context="module">
-	import { toJavaScript } from '$lib/markdown';
-	import lessonsIndex from '$lib/assets/lessons-index.json';
 	import Modal from '$lib/components/Modal.svelte';
+	import lessons from '$lib/assets/lessons';
 
 	export async function load({ params, fetch }) {
-		const url = `/data/lessons/${params.name}.md`;
-		const res = await fetch(url);
-
-		const lessonIndex = lessonsIndex.indexOf(params.name);
-		const lessonsCount = lessonsIndex.length;
+		const lesson = lessons[params.name];
+		const res = await fetch(lesson.url);
 
 		if (res.ok) {
-			const { code, frontmatter } = await res.text().then(toJavaScript);
-			const done = false;
-			const previousLesson =
-				lessonIndex - 1 >= 0 ? `/lessons/${lessonsIndex[lessonIndex - 1]}` : null;
-			const nextLesson =
-				lessonIndex + 1 < lessonsIndex.length ? `/lessons/${lessonsIndex[lessonIndex + 1]}` : null;
+			const { code, frontmatter } = await res.json();
 			return {
 				status: res.status,
 				props: {
+					done: false,
 					code,
 					frontmatter,
-					done,
-					lessonIndex,
-					lessonsCount,
-					previousLesson,
-					nextLesson,
+					previousLessonURL: lesson.previous ? `/lessons/${lesson.previous}` : '',
+					nextLessonURL: lesson.next ? `/lessons/${lesson.next}` : '',
 				},
 			};
 		} else {
 			return {
 				status: res.status,
-				error: new Error(`could not load ${url}`),
+				error: new Error(`could not load ${lesson.url}`),
 			};
 		}
 	}
 </script>
 
 <script>
-	import { goto, prefetch } from '$app/navigation';
+	import { goto, prefetchRoutes } from '$app/navigation';
 	import Editor from '$lib/components/Editor.svelte';
 	import isMatch from 'lodash/isMatch.js';
 	import { execute } from '$lib/javascript';
 	import { browser } from '$app/env';
 
+	export let done;
 	export let code;
 	export let frontmatter;
-	export let done;
-	export let lessonIndex;
-	export let lessonsCount;
-	export let previousLesson;
-	export let nextLesson;
+	export let previousLessonURL;
+	export let nextLessonURL;
 
 	$: if (browser) {
-		prefetch(nextLesson);
+		prefetchRoutes([previousLessonURL, nextLessonURL]);
 	}
 
 	$: {
@@ -68,8 +55,8 @@
 		}
 	}
 
-	$: canPrevious = previousLesson;
-	$: canNext = done && nextLesson;
+	$: enablePrevious = previousLessonURL;
+	$: enableNext = done && nextLessonURL;
 
 	function onKeyDown(event) {
 		if (event.metaKey && event.key === 'Enter') {
@@ -83,8 +70,8 @@
 			event.preventDefault();
 			event.stopPropagation();
 		}
-		if (canPrevious) {
-			goto(previousLesson);
+		if (enablePrevious) {
+			goto(previousLessonURL);
 		}
 	}
 
@@ -93,8 +80,8 @@
 			event.preventDefault();
 			event.stopPropagation();
 		}
-		if (canNext) {
-			goto(nextLesson);
+		if (enableNext) {
+			goto(nextLessonURL);
 		}
 	}
 </script>
@@ -107,12 +94,11 @@
 	</main>
 
 	<aside>
-		{#if previousLesson}
-			<button on:click={previous} disabled={!canPrevious}>Previous</button>
+		{#if previousLessonURL}
+			<button on:click={previous} disabled={!enablePrevious}>Previous</button>
 		{/if}
-		<span>{lessonIndex + 1} / {lessonsCount}</span>
-		{#if nextLesson}
-			<button on:click={next} disabled={!canNext}>Next</button>
+		{#if nextLessonURL}
+			<button on:click={next} disabled={!enableNext}>Next</button>
 		{/if}
 	</aside>
 
@@ -121,7 +107,7 @@
 			<div class="modal">
 				<h1>Congratulations!</h1>
 
-				{#if nextLesson}
+				{#if nextLessonURL}
 					<form on:submit={next}>
 						<input type="submit" value="Move on to the next lesson" title="⌘ + Enter" />
 					</form>
