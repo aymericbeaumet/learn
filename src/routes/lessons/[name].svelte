@@ -130,6 +130,7 @@
 
 	.progress {
 		background: green;
+		width: 0;
 		height: 4px;
 	}
 
