@@ -7,6 +7,14 @@
 
 		if (res.ok) {
 			const { code, frontmatter } = await res.json();
+
+			// Replace any 'undefined' string with `undefined'
+			for (const [key, value] of Object.entries(frontmatter.vars)) {
+				if (value === 'undefined') {
+					frontmatter.vars[key] = undefined;
+				}
+			}
+
 			return {
 				status: res.status,
 				props: {
