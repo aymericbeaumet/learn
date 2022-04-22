@@ -95,7 +95,7 @@
 			{lessonIndex + 1} / {lessonsCount}
 		</span>
 		{#if nextLessonURL}
-			<button on:click={next} disabled={!enableNext}>Next</button>
+			<button on:click={next} disabled={!enableNext} class="next">Next</button>
 		{/if}
 	</aside>
 </div>
@@ -119,5 +119,9 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+	}
+
+	button.next:enabled {
+		background: green;
 	}
 </style>

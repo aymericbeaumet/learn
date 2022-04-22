@@ -13,4 +13,4 @@ you've just touched one of the most important pieces in programming: variables.
 let boolVar = false;
 ```
 
-- create a new variable named `firstname` assigned to the value `'Jack'`
+- create a new variable named `firstname` with the value `'Jack'`
