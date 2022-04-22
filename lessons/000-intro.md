@@ -36,7 +36,7 @@ Alright! I think we are good to move on. Below you can find a piece of
 JavaScript code along with the first task of the course! Fulfill it to go to the
 next lesson.
 
-1. set `areYouReady` to `true`
+- set `areYouReady` to `true`
 
 ```js
 let areYouReady = false;

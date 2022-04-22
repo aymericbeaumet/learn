@@ -139,33 +139,14 @@ export function compile(markdown) {
 				code.push(':\n');
 				code.push(
 					unified()
-						.use(remarkStringify)
+						.use(remarkStringify, { bullet: '-', listItemIndent: 'one' })
 						.stringify(child)
 						.trimEnd()
 						.split('\n')
-						.map((line) => `//   - ${line.slice(4)}`)
+						.map((line) => `//   ${line}`)
 						.join('\n'),
 				);
 				code.push('\n\n');
-				break;
-
-			case 'blockquote':
-				closeComment();
-				code.push(
-					unified()
-						.use(remarkStringify)
-						.stringify(child)
-						.trimEnd()
-						.split('\n')
-						.map((line) => `// ${line.slice(2)}`)
-						.join('\n'),
-				);
-				code.push('\n\n');
-				break;
-
-			case 'thematicBreak':
-				closeComment();
-				openComment();
 				break;
 
 			case 'heading':
