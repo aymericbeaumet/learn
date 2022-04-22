@@ -143,7 +143,7 @@ export function compile(markdown) {
 						.stringify(child)
 						.trimEnd()
 						.split('\n')
-						.map((line) => `// - ${line.slice(4)}`)
+						.map((line) => `// - [ ] ${line.slice(4)}`)
 						.join('\n'),
 				);
 				code.push('\n\n');

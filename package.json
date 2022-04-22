@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "svelte-kit dev",
-		"dev-lessons": "watchexec --restart --clear -w ./lessons -- ./scripts/compile-lessons.js",
+		"dev-lessons": "watchexec --restart --clear -w ./scripts/compile-lessons.js -w ./lessons -- ./scripts/compile-lessons.js",
 		"build": "rm -rf ./src/lib/assets/lessons && ./scripts/compile-lessons.js && svelte-kit build",
 		"package": "svelte-kit package",
 		"preview": "svelte-kit preview",

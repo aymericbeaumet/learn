@@ -41,7 +41,7 @@ Alright! I think we are good to move on. Below you can find a JavaScript
 instruction along with your first task in this course! Fulfill it to go to the
 next lesson.
 
-- [ ] replace `false` with `true` in the line of code below
+- [ ] Replace `false` with `true` in the line of code below
 
 ```js
 let areYouReady = false;

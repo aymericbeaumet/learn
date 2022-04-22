@@ -1,5 +1,4 @@
 <script context="module">
-	import Modal from '$lib/components/Modal.svelte';
 	import lessons from '$lib/assets/lessons';
 
 	export async function load({ params, fetch }) {
@@ -14,6 +13,8 @@
 					done: false,
 					code,
 					frontmatter,
+					lessonIndex: lesson.i,
+					lessonsCount: Object.keys(lessons).length,
 					previousLessonURL: lesson.previous ? `/lessons/${lesson.previous}` : '',
 					nextLessonURL: lesson.next ? `/lessons/${lesson.next}` : '',
 				},
@@ -37,6 +38,8 @@
 	export let done;
 	export let code;
 	export let frontmatter;
+	export let lessonIndex;
+	export let lessonsCount;
 	export let previousLessonURL;
 	export let nextLessonURL;
 
@@ -57,13 +60,6 @@
 
 	$: enablePrevious = previousLessonURL;
 	$: enableNext = done && nextLessonURL;
-
-	function onKeyDown(event) {
-		if (event.metaKey && event.key === 'Enter') {
-			next(event);
-			return;
-		}
-	}
 
 	function previous(event) {
 		if (event) {
@@ -86,8 +82,6 @@
 	}
 </script>
 
-<svelte:window on:keydown={onKeyDown} />
-
 <div class="container">
 	<main>
 		<Editor bind:value={code} readOnly={done} />
@@ -97,26 +91,13 @@
 		{#if previousLessonURL}
 			<button on:click={previous} disabled={!enablePrevious}>Previous</button>
 		{/if}
+		<span>
+			{lessonIndex + 1} / {lessonsCount}
+		</span>
 		{#if nextLessonURL}
 			<button on:click={next} disabled={!enableNext}>Next</button>
 		{/if}
 	</aside>
-
-	{#if done}
-		<Modal>
-			<div class="modal">
-				<h1>Congratulations!</h1>
-
-				{#if nextLessonURL}
-					<form on:submit={next}>
-						<input type="submit" value="Move on to the next lesson" title="⌘ + Enter" />
-					</form>
-				{:else}
-					<p>You have finished the course!</p>
-				{/if}
-			</div>
-		</Modal>
-	{/if}
 </div>
 
 <style>
@@ -138,17 +119,5 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-	}
-
-	.modal {
-		background-color: lightgrey;
-		border-radius: 10px;
-		padding: 10px 20px;
-	}
-
-	.modal input[type='submit'] {
-		border-radius: 5px;
-		padding: 10px 20px;
-		background: green;
 	}
 </style>
