@@ -21,6 +21,7 @@
 					done: false,
 					code,
 					frontmatter,
+					lesson: params.name,
 					lessonIndex: lesson.i,
 					lessonsCount: Object.keys(lessons).length,
 					previousLessonURL: lesson.previous ? `/lessons/${lesson.previous}` : '',
@@ -37,22 +38,24 @@
 </script>
 
 <script>
-	import { goto, prefetchRoutes } from '$app/navigation';
+	import { goto, prefetch } from '$app/navigation';
 	import Editor from '$lib/components/Editor.svelte';
 	import isMatch from 'lodash/isMatch.js';
 	import { execute } from '$lib/javascript';
 	import { browser } from '$app/env';
+	import lessonsAll from '$lib/assets/lessons';
 
 	export let done;
 	export let code;
 	export let frontmatter;
+	export let lesson;
 	export let lessonIndex;
 	export let lessonsCount;
 	export let previousLessonURL;
 	export let nextLessonURL;
 
 	$: if (browser) {
-		prefetchRoutes([previousLessonURL, nextLessonURL]);
+		prefetch(nextLessonURL);
 	}
 
 	$: {
@@ -98,13 +101,23 @@
 	<aside>
 		<div class="progress" style={`width: ${(lessonIndex / lessonsCount) * 100}%;`} />
 		<div class="menu">
-			{#if previousLessonURL}
-				<button on:click={previous} disabled={!enablePrevious}>Previous</button>
-			{/if}
-			<span />
-			{#if nextLessonURL}
-				<button on:click={next} disabled={!enableNext} class="next">Next</button>
-			{/if}
+			<nav>
+				{#if previousLessonURL}
+					<button on:click={previous} disabled={!enablePrevious}>Previous</button>
+				{/if}
+			</nav>
+
+			<select bind:value={lesson} on:change={() => goto(`/lessons/${lesson}`)}>
+				{#each Object.keys(lessonsAll) as l}
+					<option value={l}>{l}</option>
+				{/each}
+			</select>
+
+			<nav>
+				{#if nextLessonURL}
+					<button on:click={next} disabled={!enableNext} class="next">Next</button>
+				{/if}
+			</nav>
 		</div>
 	</aside>
 </div>
@@ -139,6 +152,24 @@
 		justify-content: center;
 		align-items: center;
 		flex-grow: 1;
+	}
+
+	.menu nav {
+		width: 80px;
+	}
+
+	.menu nav:nth-of-type(1) {
+		text-align: right;
+		margin-right: 10px;
+	}
+
+	.menu nav:nth-of-type(2) {
+		text-align: left;
+		margin-left: 10px;
+	}
+
+	.menu select {
+		width: 200px;
 	}
 
 	button.next:enabled {

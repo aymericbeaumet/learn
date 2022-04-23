@@ -39,8 +39,6 @@
 			language: 'javascript',
 			minimap: { enabled: false },
 			readOnly,
-			renderFinalNewline: false,
-			scrollBeyondLastLine: false,
 			value,
 		});
 
