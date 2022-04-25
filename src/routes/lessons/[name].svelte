@@ -94,6 +94,38 @@
 			goto(nextLessonURL);
 		}
 	}
+
+	function getTypeAndURL(v) {
+		const type = typeof v;
+
+		if (v === null) {
+			return [type, 'https://developer.mozilla.org/en-US/docs/Glossary/Null'];
+		}
+
+		switch (type) {
+			case 'bigint':
+				return [type, 'https://developer.mozilla.org/en-US/docs/Glossary/BigInt'];
+			case 'boolean':
+				return [type, 'https://developer.mozilla.org/en-US/docs/Glossary/Boolean'];
+			case 'function':
+				return [type, 'https://developer.mozilla.org/en-US/docs/Glossary/Function'];
+			case 'number':
+				return [type, 'https://developer.mozilla.org/en-US/docs/Glossary/Number'];
+			case 'object':
+				return [
+					type,
+					'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object',
+				];
+			case 'string':
+				return [type, 'https://developer.mozilla.org/en-US/docs/Glossary/String'];
+			case 'symbol':
+				return [type, 'https://developer.mozilla.org/en-US/docs/Glossary/Symbol'];
+			case 'undefined':
+				return [type, 'https://developer.mozilla.org/en-US/docs/Glossary/undefined'];
+		}
+
+		throw new Error(`unsupported value ${JSON.stringify(value)} and type ${JSON.stringify(type)}`);
+	}
 </script>
 
 <div class="container">
@@ -113,10 +145,13 @@
 				<tbody>
 					{#each Object.keys(vars).sort() as ident}
 						{@const value = vars[ident]}
+						{@const [type, href] = getTypeAndURL(value)}
 						<tr>
 							<td><pre>{ident}</pre></td>
 							<td><pre>{value}</pre></td>
-							<td><pre>{typeof value}</pre></td>
+							<td>
+								<a target="_blank" {href}><pre>{type}</pre></a>
+							</td>
 						</tr>
 					{/each}
 				</tbody>
@@ -179,6 +214,16 @@
 	aside td {
 		padding: 5px;
 		border: 1px solid black;
+	}
+
+	aside a {
+		text-decoration: none;
+	}
+
+	aside pre {
+		border: 1px solid lightgray;
+		border-radius: 5px;
+		padding: 3px;
 	}
 
 	nav {
