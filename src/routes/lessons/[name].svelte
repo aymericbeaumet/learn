@@ -95,36 +95,30 @@
 		}
 	}
 
-	function getTypeAndURL(v) {
-		const type = typeof v;
-
-		if (v === null) {
-			return [type, 'https://developer.mozilla.org/en-US/docs/Glossary/Null'];
-		}
-
+	function getValueTypeURL(value) {
+		const type = typeof value;
 		switch (type) {
 			case 'bigint':
-				return [type, 'https://developer.mozilla.org/en-US/docs/Glossary/BigInt'];
+				return [value, type, 'https://developer.mozilla.org/en-US/docs/Glossary/BigInt'];
 			case 'boolean':
-				return [type, 'https://developer.mozilla.org/en-US/docs/Glossary/Boolean'];
+				return [value, type, 'https://developer.mozilla.org/en-US/docs/Glossary/Boolean'];
 			case 'function':
-				return [type, 'https://developer.mozilla.org/en-US/docs/Glossary/Function'];
+				return [value, type, 'https://developer.mozilla.org/en-US/docs/Glossary/Function'];
 			case 'number':
-				return [type, 'https://developer.mozilla.org/en-US/docs/Glossary/Number'];
+				return [value, type, 'https://developer.mozilla.org/en-US/docs/Glossary/Number'];
 			case 'object':
-				return [
-					type,
-					'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object',
-				];
+				return [value, type, 'https://developer.mozilla.org/en-US/docs/Glossary/Object'];
 			case 'string':
-				return [type, 'https://developer.mozilla.org/en-US/docs/Glossary/String'];
+				return [value, type, 'https://developer.mozilla.org/en-US/docs/Glossary/String'];
 			case 'symbol':
-				return [type, 'https://developer.mozilla.org/en-US/docs/Glossary/Symbol'];
+				return [value, type, 'https://developer.mozilla.org/en-US/docs/Glossary/Symbol'];
 			case 'undefined':
-				return [type, 'https://developer.mozilla.org/en-US/docs/Glossary/undefined'];
+				return [value, type, 'https://developer.mozilla.org/en-US/docs/Glossary/undefined'];
+			default:
+				throw new Error(
+					`unsupported value ${JSON.stringify(value)} with type ${JSON.stringify(type)}`,
+				);
 		}
-
-		throw new Error(`unsupported value ${JSON.stringify(value)} and type ${JSON.stringify(type)}`);
 	}
 </script>
 
@@ -137,15 +131,25 @@
 				<caption>Variables</caption>
 				<thead>
 					<tr>
-						<th scope="col">Identifier</th>
-						<th scope="col">Value</th>
-						<th scope="col">Type</th>
+						<th scope="col"
+							><a
+								target="_blank"
+								href="https://developer.mozilla.org/en-US/docs/Glossary/Identifier">Identifier</a
+							></th
+						>
+						<th scope="col"
+							><a target="_blank" href="https://developer.mozilla.org/en-US/docs/Glossary/Value"
+								>Value</a
+							></th
+						>
+						<th scope="col"
+							><a href="https://developer.mozilla.org/en-US/docs/Glossary/type">Type</a></th
+						>
 					</tr>
 				</thead>
 				<tbody>
 					{#each Object.keys(vars).sort() as ident}
-						{@const value = vars[ident]}
-						{@const [type, href] = getTypeAndURL(value)}
+						{@const [value, type, href] = getValueTypeURL(vars[ident])}
 						<tr>
 							<td><pre>{ident}</pre></td>
 							<td><pre>{value}</pre></td>
@@ -212,7 +216,7 @@
 
 	aside th,
 	aside td {
-		padding: 5px;
+		padding: 2px 10px;
 		border: 1px solid black;
 	}
 
