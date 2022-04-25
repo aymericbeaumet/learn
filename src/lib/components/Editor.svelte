@@ -39,6 +39,7 @@
 			language: 'typescript',
 			minimap: { enabled: false },
 			readOnly,
+			renderLineHighlightOnlyWhenFocus: true,
 			value,
 		});
 
