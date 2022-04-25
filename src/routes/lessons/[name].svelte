@@ -54,6 +54,8 @@
 	export let previousLessonURL;
 	export let nextLessonURL;
 
+	let vars = {};
+
 	$: if (browser) {
 		prefetch(nextLessonURL);
 	}
@@ -61,8 +63,9 @@
 	$: {
 		if (!done) {
 			try {
-				const { vars } = execute(code);
-				done = isMatch(vars, frontmatter.vars || {});
+				const out = execute(code);
+				done = isMatch(out.vars, frontmatter.vars || {});
+				vars = out.vars;
 			} catch (err) {
 				console.error(err);
 			}
@@ -96,30 +99,55 @@
 <div class="container">
 	<main>
 		<Editor bind:value={code} readOnly={done} />
+
+		<aside>
+			<table>
+				<caption>Variables</caption>
+				<thead>
+					<tr>
+						<th scope="col">Identifier</th>
+						<th scope="col">Value</th>
+						<th scope="col">Type</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each Object.keys(vars).sort() as ident}
+						{@const value = vars[ident]}
+						<tr>
+							<td><pre>{ident}</pre></td>
+							<td><pre>{value}</pre></td>
+							<td><pre>{typeof value}</pre></td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+		</aside>
 	</main>
 
-	<aside>
+	<nav>
 		<div class="progress" style={`width: ${(lessonIndex / lessonsCount) * 100}%;`} />
 		<div class="menu">
-			<nav>
+			<div class="previous">
 				{#if previousLessonURL}
 					<button on:click={previous} disabled={!enablePrevious}>Previous</button>
 				{/if}
-			</nav>
+			</div>
 
-			<select bind:value={lesson} on:change={() => goto(`/lessons/${lesson}`)}>
-				{#each Object.keys(lessonsAll) as l}
-					<option value={l}>{l}</option>
-				{/each}
-			</select>
+			<div>
+				<select bind:value={lesson} on:change={() => goto(`/lessons/${lesson}`)}>
+					{#each Object.keys(lessonsAll) as l}
+						<option value={l}>{l}</option>
+					{/each}
+				</select>
+			</div>
 
-			<nav>
+			<div class="next">
 				{#if nextLessonURL}
-					<button on:click={next} disabled={!enableNext} class="next">Next</button>
+					<button on:click={next} disabled={!enableNext}>Next</button>
 				{/if}
-			</nav>
+			</div>
 		</div>
-	</aside>
+	</nav>
 </div>
 
 <style>
@@ -132,9 +160,28 @@
 
 	main {
 		flex-grow: 1;
+		display: flex;
+		flex-direction: row;
 	}
 
 	aside {
+		width: 400px;
+		border-left: 2px solid gray;
+		padding: 10px 30px;
+	}
+
+	aside table {
+		table-layout: fixed;
+		border-collapse: collapse;
+	}
+
+	aside th,
+	aside td {
+		padding: 5px;
+		border: 1px solid black;
+	}
+
+	nav {
 		height: 40px;
 		background: lightgrey;
 		display: flex;
@@ -154,16 +201,17 @@
 		flex-grow: 1;
 	}
 
-	.menu nav {
+	.menu .previous,
+	.menu .next {
 		width: 80px;
 	}
 
-	.menu nav:nth-of-type(1) {
+	.menu .previous {
 		text-align: right;
 		margin-right: 10px;
 	}
 
-	.menu nav:nth-of-type(2) {
+	.menu .next {
 		text-align: left;
 		margin-left: 10px;
 	}
@@ -172,7 +220,7 @@
 		width: 200px;
 	}
 
-	button.next:enabled {
+	.next button:enabled {
 		background: green;
 	}
 </style>

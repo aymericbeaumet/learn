@@ -36,7 +36,7 @@
 			folding: false,
 			fontSize: 13,
 			guides: { indentation: false },
-			language: 'javascript',
+			language: 'typescript',
 			minimap: { enabled: false },
 			readOnly,
 			value,
