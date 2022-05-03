@@ -21,10 +21,10 @@ disturbing at first, but an editor actually brings features that help you write
 code, and it is important you familiarize yourself with this environment.
 
 We are going to learn how to program with the JavaScript language. JavaScript is
-literally present everywhere: in your web-browser, in the servers, in embedded
-devices, in video games, etc. It has a simple yet expressive syntax and allows
-for a great learning experience as you can immediately start playing with it to
-create your own projects in a wide variety of domains.
+literally present everywhere: in web-browsers, in servers, in embedded devices,
+in video games, etc. It has a simple yet expressive syntax and allows for a
+great learning experience as you can immediately start playing with it to create
+your own projects in a wide variety of domains.
 
 What you are reading right now is actually valid JavaScript code. More
 specifically it is a multiline comment. Comments are used to document source

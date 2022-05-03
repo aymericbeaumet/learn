@@ -55,6 +55,8 @@
 	export let nextLessonURL;
 
 	let vars = {};
+	let declarations = {};
+	let selections = [];
 
 	$: if (browser) {
 		prefetch(nextLessonURL);
@@ -66,6 +68,7 @@
 				const out = execute(code);
 				done = isMatch(out.vars, frontmatter.vars || {});
 				vars = out.vars;
+				declarations = out.declarations;
 			} catch (err) {
 				console.error(err);
 			}
@@ -75,7 +78,7 @@
 	$: enablePrevious = previousLessonURL;
 	$: enableNext = done && nextLessonURL;
 
-	function previous(event) {
+	const previous = (event) => {
 		if (event) {
 			event.preventDefault();
 			event.stopPropagation();
@@ -83,9 +86,9 @@
 		if (enablePrevious) {
 			goto(previousLessonURL);
 		}
-	}
+	};
 
-	function next(event) {
+	const next = (event) => {
 		if (event) {
 			event.preventDefault();
 			event.stopPropagation();
@@ -93,7 +96,16 @@
 		if (enableNext) {
 			goto(nextLessonURL);
 		}
-	}
+	};
+
+	const onMouseEnter = (event) => {
+		const identifier = event.target.getAttribute('data-identifier');
+		selections = [declarations[identifier]];
+	};
+
+	const onMouseLeave = () => {
+		selections = [];
+	};
 
 	function getValueTypeURL(value) {
 		const type = typeof value;
@@ -109,7 +121,11 @@
 			case 'object':
 				return [value, type, 'https://developer.mozilla.org/en-US/docs/Glossary/Object'];
 			case 'string':
-				return [value, type, 'https://developer.mozilla.org/en-US/docs/Glossary/String'];
+				return [
+					JSON.stringify(value),
+					type,
+					'https://developer.mozilla.org/en-US/docs/Glossary/String',
+				];
 			case 'symbol':
 				return [value, type, 'https://developer.mozilla.org/en-US/docs/Glossary/Symbol'];
 			case 'undefined':
@@ -124,7 +140,7 @@
 
 <div class="container">
 	<main>
-		<Editor bind:value={code} readOnly={done} />
+		<Editor bind:value={code} readOnly={done} {selections} />
 
 		<aside>
 			<table>
@@ -151,7 +167,12 @@
 					{#each Object.keys(vars).sort() as ident}
 						{@const [value, type, href] = getValueTypeURL(vars[ident])}
 						<tr>
-							<td><pre>{ident}</pre></td>
+							<td
+								class="ident"
+								on:mouseenter={onMouseEnter}
+								on:mouseleave={onMouseLeave}
+								data-identifier={ident}><pre>{ident}</pre></td
+							>
 							<td><pre>{value}</pre></td>
 							<td>
 								<a target="_blank" {href}><pre>{type}</pre></a>
@@ -222,6 +243,10 @@
 
 	aside a {
 		text-decoration: none;
+	}
+
+	aside td.ident:hover {
+		background-color: lightgray;
 	}
 
 	aside pre {

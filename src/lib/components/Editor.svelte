@@ -4,6 +4,7 @@
 
 	export let value;
 	export let readOnly = false;
+	export let selections = [];
 
 	let editor = null;
 	let domElement = null;
@@ -23,6 +24,19 @@
 		}
 	}
 
+	$: if (editor) {
+		if (selections.length === 0) {
+			editor.setSelection({
+				selectionStartLineNumber: 0,
+				selectionStartColumn: 0,
+				positionLineNumber: 0,
+				positionColumn: 0,
+			});
+		} else {
+			editor.setSelections(selections);
+		}
+	}
+
 	onMount(async () => {
 		self.MonacoEnvironment = {
 			getWorker: function () {
@@ -36,7 +50,7 @@
 			folding: false,
 			fontSize: 13,
 			guides: { indentation: false },
-			language: 'typescript',
+			language: 'javascript',
 			minimap: { enabled: false },
 			readOnly,
 			renderLineHighlightOnlyWhenFocus: true,
