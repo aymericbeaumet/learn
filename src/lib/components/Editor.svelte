@@ -5,6 +5,7 @@
 	export let value;
 	export let readOnly = false;
 	export let selections = [];
+	export let position = null;
 
 	let editor = null;
 	let domElement = null;
@@ -37,6 +38,11 @@
 		}
 	}
 
+	$: if (editor && position) {
+		editor.focus();
+		editor.setPosition(position);
+	}
+
 	onMount(async () => {
 		self.MonacoEnvironment = {
 			getWorker: function () {
@@ -58,6 +64,7 @@
 		});
 
 		const editorModel = editor.getModel();
+
 		editorModel.onDidChangeContent(() => {
 			value = editorModel.getValue();
 		});

@@ -57,6 +57,7 @@
 	let vars = {};
 	let declarations = {};
 	let selections = [];
+	let position = null;
 
 	$: if (browser) {
 		prefetch(nextLessonURL);
@@ -98,9 +99,19 @@
 		}
 	};
 
+	const onClick = (event) => {
+		const identifier = event.currentTarget.getAttribute('data-identifier');
+		const declaration = declarations[identifier];
+		position = {
+			lineNumber: declaration.selectionStartLineNumber,
+			column: declaration.selectionStartColumn,
+		};
+	};
+
 	const onMouseEnter = (event) => {
-		const identifier = event.target.getAttribute('data-identifier');
-		selections = [declarations[identifier]];
+		const identifier = event.currentTarget.getAttribute('data-identifier');
+		const declaration = declarations[identifier];
+		selections = [declaration];
 	};
 
 	const onMouseLeave = () => {
@@ -160,7 +171,7 @@
 
 <div class="container">
 	<main>
-		<Editor bind:value={code} readOnly={done} {selections} />
+		<Editor bind:value={code} readOnly={done} {selections} {position} />
 
 		<aside>
 			<table>
@@ -191,6 +202,7 @@
 						<tr>
 							<td
 								class="ident"
+								on:click={onClick}
 								on:mouseenter={onMouseEnter}
 								on:mouseleave={onMouseLeave}
 								data-identifier={ident}><pre>{ident}</pre></td
@@ -269,7 +281,7 @@
 
 	aside td.ident:hover {
 		background-color: lightgray;
-		cursor: help;
+		cursor: pointer;
 	}
 
 	aside pre {
