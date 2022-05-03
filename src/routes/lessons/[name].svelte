@@ -179,7 +179,9 @@
 							></th
 						>
 						<th scope="col"
-							><a href="https://developer.mozilla.org/en-US/docs/Glossary/type">Type</a></th
+							><a target="_blank" href="https://developer.mozilla.org/en-US/docs/Glossary/type"
+								>Type</a
+							></th
 						>
 					</tr>
 				</thead>
