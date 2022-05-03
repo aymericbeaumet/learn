@@ -267,6 +267,7 @@
 
 	aside td.ident:hover {
 		background-color: lightgray;
+		cursor: help;
 	}
 
 	aside pre {
