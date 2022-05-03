@@ -29,14 +29,15 @@ and allows for a great learning experience as you can immediately start
 playing with it to create your own projects in a wide variety of domains.
 
 What you are reading right now is actually valid JavaScript code. More
-specifically it is a multiline comment. Comments are used to document source
+specifically it is a multi-line comment (starting with ∕* and ending with
+*∕). The other form of comments are single-line comments (starting with //
+and ending at the end of the line). Comments are used to document source
 code, and they usually convey information that cannot be expressed
-otherwise. Comments are mostly useful for humans, and they are ignored
-during program execution.
+otherwise.
 
 Alright, I think we are good to move on. Below you can find a piece of
-JavaScript code along with the first task of the course. Fulfill it to go to
-the next lesson.
+JavaScript code along with the first tasks of the course. Fulfill it to go
+to the next lesson.
 
 1. Set `areYouReady` to 'yes'
 

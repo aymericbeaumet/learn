@@ -11,10 +11,9 @@ important pieces in programming: variables.
 
 Variables enable you to store information in your program. Without them,
 programming wouldn't really be interesting. You can store a lot of different
-things into variables as you will throughout this course.
+things into variables as you will learn throughout this course.
 
-Let's start with the most simple thing you can do: declare a variable, but
-do not give it any value. The syntax to do so is:
+Let's start by learning how to declare a variable. The syntax to do so is:
 
 ```js
 let name;

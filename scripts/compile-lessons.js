@@ -132,12 +132,7 @@ export function compile(markdown) {
 
 			case 'list':
 				closeComment();
-				code.push(
-					'////////////////////////////////////////////////////////////////////////////////\n',
-				);
-				code.push('//                                   | TASKS |\n');
-				code.push('//                                   `-------´\n');
-				code.push('//\n');
+				code.push('// Tasks:\n');
 				code.push(
 					unified()
 						.use(remarkStringify, { bullet: '-', listItemIndent: 'one' })
@@ -170,7 +165,7 @@ export function compile(markdown) {
 						.stringify(child)
 						.trimEnd()
 						.split('\n')
-						.map((line) => ` *  ${line}`)
+						.map((line) => ` *  ${line.replace('\\*', '*')}`)
 						.join('\n'),
 				);
 				code.push('\n *\n');
