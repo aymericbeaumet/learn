@@ -111,23 +111,43 @@
 		const type = typeof value;
 		switch (type) {
 			case 'bigint':
-				return [value, type, 'https://developer.mozilla.org/en-US/docs/Glossary/BigInt'];
+				return [
+					value,
+					type,
+					'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#bigint_type',
+				];
 			case 'boolean':
 				return [value, type, 'https://developer.mozilla.org/en-US/docs/Glossary/Boolean'];
 			case 'function':
-				return [value, type, 'https://developer.mozilla.org/en-US/docs/Glossary/Function'];
+				return [
+					value,
+					type,
+					'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions',
+				];
 			case 'number':
-				return [value, type, 'https://developer.mozilla.org/en-US/docs/Glossary/Number'];
+				return [
+					value,
+					type,
+					'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type',
+				];
 			case 'object':
-				return [value, type, 'https://developer.mozilla.org/en-US/docs/Glossary/Object'];
+				return [
+					value,
+					type,
+					'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object',
+				];
 			case 'string':
 				return [
 					JSON.stringify(value),
 					type,
-					'https://developer.mozilla.org/en-US/docs/Glossary/String',
+					'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String',
 				];
 			case 'symbol':
-				return [value, type, 'https://developer.mozilla.org/en-US/docs/Glossary/Symbol'];
+				return [
+					value,
+					type,
+					'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol',
+				];
 			case 'undefined':
 				return [value, type, 'https://developer.mozilla.org/en-US/docs/Glossary/undefined'];
 			default:
