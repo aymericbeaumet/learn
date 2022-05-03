@@ -132,14 +132,19 @@ export function compile(markdown) {
 
 			case 'list':
 				closeComment();
-				code.push('// Tasks:\n');
+				code.push(
+					'////////////////////////////////////////////////////////////////////////////////\n',
+				);
+				code.push('//                                   | TASKS |\n');
+				code.push('//                                   `-------´\n');
+				code.push('//\n');
 				code.push(
 					unified()
 						.use(remarkStringify, { bullet: '-', listItemIndent: 'one' })
 						.stringify(child)
 						.trimEnd()
 						.split('\n')
-						.map((line) => `//   ${line}`)
+						.map((line) => `// ${line}`)
 						.join('\n'),
 				);
 				code.push('\n\n');
@@ -150,7 +155,7 @@ export function compile(markdown) {
 				openComment();
 				code.push(' *  ');
 				if (child.depth === 1) {
-					code.push(pad(child.children[0].value.toUpperCase(), 80).trimEnd());
+					code.push(pad(child.children[0].value.toUpperCase(), 80 - ' *  '.length).trimEnd());
 				} else {
 					code.push(child.children[0].value.toUpperCase());
 				}
