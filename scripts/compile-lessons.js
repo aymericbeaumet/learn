@@ -132,11 +132,9 @@ export function compile(markdown) {
 
 			case 'list':
 				closeComment();
-				code.push(
-					'////////////////////////////////////////////////////////////////////////////////\n',
-				);
-				code.push('//                                   | Tasks |\n');
-				code.push('//                                   `-------´\n');
+				code.push('//  +-------+\n');
+				code.push('//  | Tasks |\n');
+				code.push('//  +-------+\n');
 				code.push('//\n');
 				code.push(
 					unified()

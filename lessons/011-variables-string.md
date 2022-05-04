@@ -11,9 +11,10 @@ not very exciting. Let's see how we can push it one step further by storing
 text into our variables.
 
 Text in JavaScript is expressed as sequences of characters, which are called
-"strings". Strings are delimited by single or double quotes.
+strings. Strings are delimited by single or double quotes.
 
 ```js
+// This is an example of a variable `firstname` containing the string "John".
 let firstname = 'John';
 ```
 

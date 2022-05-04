@@ -13,13 +13,11 @@ Variables enable you to store information in your program. Without them,
 programming wouldn't really be interesting. You can store a lot of different
 things into variables as you will learn throughout this course.
 
-Let's start by learning how to declare a variable. The syntax to do so is:
+This JavaScript creates a variable with the identifier "name", but without
+any value being assigned to it.
 
 ```js
 let name;
 ```
-
-This JavaScript creates a variable with the identifier "name", but without
-any value being assigned to it.
 
 1. Declare a variable `dog` without a value
