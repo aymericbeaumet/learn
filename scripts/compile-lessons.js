@@ -135,6 +135,7 @@ export function compile(markdown) {
 				if (!child.ordered) {
 					openComment();
 					code.pop(); // remove the last newline
+					code.push('\n');
 					code.push(
 						unified()
 							.use(remarkStringify, { listItemIndent: 'one', bullet: '-' })
@@ -187,8 +188,7 @@ export function compile(markdown) {
 						.map((line) => ` *  ${line.replaceAll('\\*', '*')}`)
 						.join('\n'),
 				);
-				code.push('\n');
-				code.push(' *\n');
+				code.push('\n *\n');
 				break;
 
 			case 'code':
