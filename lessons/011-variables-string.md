@@ -1,6 +1,7 @@
 ---
 vars:
   lastname: 'Doe'
+  fullname: 'John Doe'
 ---
 
 # Variables: String
@@ -17,3 +18,5 @@ let firstname = 'John';
 ```
 
 1. Create a new variable named `lastname` with the value 'Doe'
+2. Create a variable named `fullname` containing both the firstname and
+   lastname separated by a space

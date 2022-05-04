@@ -4,12 +4,19 @@ export function execute(code) {
 	const events = [];
 	const vars = {};
 	const declarations = {};
+	const out = { events, vars, declarations };
 
-	const ast = babelParser.parse(code, {
-		sourceType: 'script',
-		attachComment: false,
-		strictMode: true,
-	});
+	let ast;
+
+	try {
+		ast = babelParser.parse(code, {
+			sourceType: 'script',
+			attachComment: false,
+			strictMode: true,
+		});
+	} catch (err) {
+		return out;
+	}
 
 	ast.program.body.forEach((node) => {
 		if (node.type === 'VariableDeclaration') {
@@ -46,5 +53,5 @@ export function execute(code) {
 		},
 	);
 
-	return { events, vars, declarations };
+	return out;
 }

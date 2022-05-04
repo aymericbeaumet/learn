@@ -174,8 +174,8 @@
 		<Editor bind:value={code} readOnly={done} {selections} {position} />
 
 		<aside>
+			<h2>Debbugger</h2>
 			<table>
-				<caption>Variables</caption>
 				<thead>
 					<tr>
 						<th scope="col"

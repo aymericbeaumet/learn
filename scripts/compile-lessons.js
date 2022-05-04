@@ -132,10 +132,15 @@ export function compile(markdown) {
 
 			case 'list':
 				closeComment();
-				code.push('// Tasks:\n');
+				code.push(
+					'////////////////////////////////////////////////////////////////////////////////\n',
+				);
+				code.push('//                                   | Tasks |\n');
+				code.push('//                                   `-------´\n');
+				code.push('//\n');
 				code.push(
 					unified()
-						.use(remarkStringify, { bullet: '-', listItemIndent: 'one' })
+						.use(remarkStringify, { listItemIndent: 'one' })
 						.stringify(child)
 						.trimEnd()
 						.split('\n')
