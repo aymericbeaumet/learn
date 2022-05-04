@@ -131,7 +131,6 @@ export function compile(markdown) {
 				break;
 
 			case 'list':
-				console.log(child);
 				if (!child.ordered) {
 					openComment();
 					code.pop(); // remove the last newline
