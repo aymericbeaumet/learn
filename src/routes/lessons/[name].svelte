@@ -6,10 +6,10 @@
 		const res = await fetch(lesson.url);
 
 		if (res.ok) {
-			const { code, frontmatter } = await res.json();
+			const { code, frontmatter = {} } = await res.json();
 
 			// Replace any 'undefined' string with `undefined'
-			for (const [key, value] of Object.entries(frontmatter.assert)) {
+			for (const [key, value] of Object.entries(frontmatter.assert || {})) {
 				if (value === 'undefined') {
 					frontmatter.assert[key] = undefined;
 				}
@@ -67,7 +67,7 @@
 		if (!done) {
 			try {
 				const out = execute(code);
-				done = isMatch(out.vars, (frontmatter || {}).assert || {});
+				done = isMatch(out.vars, frontmatter.assert || {});
 				vars = out.vars;
 				declarations = out.declarations;
 			} catch (err) {
