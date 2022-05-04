@@ -141,7 +141,7 @@ export function compile(markdown) {
 							.stringify(child)
 							.trimEnd()
 							.split('\n')
-							.map((line) => ` *    ${line.replaceAll('\\*', '*')}`)
+							.map((line) => ` *    ${line.replace(/\\\*/g, '*')}`)
 							.join('\n'),
 					);
 					code.push('\n');
@@ -184,7 +184,7 @@ export function compile(markdown) {
 						.stringify(child)
 						.trimEnd()
 						.split('\n')
-						.map((line) => ` *  ${line.replaceAll('\\*', '*')}`)
+						.map((line) => ` *  ${line.replace(/\\\*/g, '*')}`)
 						.join('\n'),
 				);
 				code.push('\n *\n');

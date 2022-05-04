@@ -174,7 +174,7 @@
 		<Editor bind:value={code} readOnly={done} {selections} {position} />
 
 		<aside>
-			<h2>Debugger</h2>
+			<h2>Variables</h2>
 			<table>
 				<thead>
 					<tr>
