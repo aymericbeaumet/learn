@@ -9,9 +9,9 @@
 			const { code, frontmatter } = await res.json();
 
 			// Replace any 'undefined' string with `undefined'
-			for (const [key, value] of Object.entries(frontmatter.vars)) {
+			for (const [key, value] of Object.entries(frontmatter.assert)) {
 				if (value === 'undefined') {
-					frontmatter.vars[key] = undefined;
+					frontmatter.assert[key] = undefined;
 				}
 			}
 
@@ -67,7 +67,7 @@
 		if (!done) {
 			try {
 				const out = execute(code);
-				done = isMatch(out.vars, frontmatter.vars || {});
+				done = isMatch(out.vars, (frontmatter || {}).assert || {});
 				vars = out.vars;
 				declarations = out.declarations;
 			} catch (err) {

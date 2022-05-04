@@ -131,21 +131,37 @@ export function compile(markdown) {
 				break;
 
 			case 'list':
-				closeComment();
-				code.push('//  +-------+\n');
-				code.push('//  | Tasks |\n');
-				code.push('//  +-------+\n');
-				code.push('//\n');
-				code.push(
-					unified()
-						.use(remarkStringify, { listItemIndent: 'one' })
-						.stringify(child)
-						.trimEnd()
-						.split('\n')
-						.map((line) => `// ${line}`)
-						.join('\n'),
-				);
-				code.push('\n\n');
+				console.log(child);
+				if (!child.ordered) {
+					openComment();
+					code.pop(); // remove the last newline
+					code.push(
+						unified()
+							.use(remarkStringify, { listItemIndent: 'one', bullet: '-' })
+							.stringify(child)
+							.trimEnd()
+							.split('\n')
+							.map((line) => ` *    ${line.replaceAll('\\*', '*')}`)
+							.join('\n'),
+					);
+					code.push('\n');
+				} else {
+					closeComment();
+					code.push('//  +-------+\n');
+					code.push('//  | Tasks |\n');
+					code.push('//  +-------+\n');
+					code.push('//\n');
+					code.push(
+						unified()
+							.use(remarkStringify, { listItemIndent: 'one' })
+							.stringify(child)
+							.trimEnd()
+							.split('\n')
+							.map((line) => `// ${line}`)
+							.join('\n'),
+					);
+					code.push('\n\n');
+				}
 				break;
 
 			case 'heading':
@@ -168,10 +184,11 @@ export function compile(markdown) {
 						.stringify(child)
 						.trimEnd()
 						.split('\n')
-						.map((line) => ` *  ${line.replace('\\*', '*')}`)
+						.map((line) => ` *  ${line.replaceAll('\\*', '*')}`)
 						.join('\n'),
 				);
-				code.push('\n *\n');
+				code.push('\n');
+				code.push(' *\n');
 				break;
 
 			case 'code':

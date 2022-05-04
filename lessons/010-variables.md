@@ -1,5 +1,5 @@
 ---
-vars:
+assert:
   dog: undefined
 ---
 
@@ -13,11 +13,12 @@ Variables enable you to store information in your program. Without them,
 programming wouldn't really be interesting. You can store a lot of different
 things into variables as you will learn throughout this course.
 
-This JavaScript creates a variable with the identifier "name", but without
-any value being assigned to it.
+We use the keyword `let` followed by the name (also known as identifier) to
+declare a variable in JavaScript.
 
 ```js
-let name;
+// Declaring a variable named `sport`
+let sport;
 ```
 
-1. Declare a variable `dog` without a value
+1. Declare a variable `dog`

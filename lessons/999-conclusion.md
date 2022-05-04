@@ -1,5 +1,5 @@
 ---
-vars:
+assert:
   didYouLearn: true
 ---
 

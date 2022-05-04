@@ -7,6 +7,7 @@ module.exports = {
 		{
 			files: '**/*.md',
 			options: {
+				singleQuote: false,
 				printWidth: 80 - ' *  '.length,
 				proseWrap: 'always',
 			},

@@ -1,6 +1,6 @@
 ---
-vars:
-  areYouReady: 'yes'
+assert:
+  areYouReady: "yes"
 ---
 
 # Intro
@@ -39,8 +39,8 @@ Alright, I think we are good to move on. Below you can find a piece of
 JavaScript code along with the first tasks of the course. Fulfill it to go
 to the next lesson.
 
-1. Set `areYouReady` to 'yes'
+1. Set `areYouReady` to "yes"
 
 ```js
-let areYouReady = 'no';
+let areYouReady = "no";
 ```
