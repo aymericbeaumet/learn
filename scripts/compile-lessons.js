@@ -15,6 +15,13 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 const lessonsInputDir = path.join(__dirname, '../lessons/');
 const lessonsOutputDir = path.join(__dirname, '../src/lib/assets/lessons/');
 
+function cleanLine(line) {
+	return line
+		.replace(/\\[*]/g, '*')
+		.replace(/[/][*]/g, '∕*')
+		.replace(/[*][/]/g, '*∕');
+}
+
 // Create output directory
 fs.mkdir(lessonsOutputDir, { recursive: true, mode: 0o755 }, function (err) {
 	if (err) {
@@ -141,15 +148,18 @@ export function compile(markdown) {
 							.stringify(child)
 							.trimEnd()
 							.split('\n')
-							.map((line) => ` *    ${line.replace(/\\\*/g, '*')}`)
+							.map((line) => ` *    ${cleanLine(line)}`)
 							.join('\n'),
 					);
 					code.push('\n');
 				} else {
 					closeComment();
-					code.push('//  +-------+\n');
-					code.push('//  | Tasks |\n');
-					code.push('//  +-------+\n');
+					code.push(
+						'////////////////////////////////////////////////////////////////////////////////\n',
+					);
+					code.push('// +-------+\n');
+					code.push('// | Tasks |\n');
+					code.push('// +-------+\n');
 					code.push('//\n');
 					code.push(
 						unified()
@@ -184,7 +194,7 @@ export function compile(markdown) {
 						.stringify(child)
 						.trimEnd()
 						.split('\n')
-						.map((line) => ` *  ${line.replace(/\\\*/g, '*')}`)
+						.map((line) => ` *  ${cleanLine(line)}`)
 						.join('\n'),
 				);
 				code.push('\n *\n');

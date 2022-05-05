@@ -174,6 +174,12 @@
 		<Editor bind:value={code} readOnly={done} {selections} {position} />
 
 		<aside>
+			<h1>Lesson: {lesson}</h1>
+
+			<h2>Tasks</h2>
+
+			todo
+
 			<h2>Variables</h2>
 			<table>
 				<thead>
