@@ -29,8 +29,8 @@ and allows for a great learning experience as you can immediately start
 playing with it to create your own projects in a wide variety of domains.
 
 What you are reading right now is actually valid JavaScript code. More
-specifically it is a multi-line comment (starting with ∕* and ending with
-*∕). The other form of comments is single-line comments (starting with //
+specifically it is a multi-line comment (starting with /\* and ending with
+\*/). The other form of comments is single-line comments (starting with //
 and ending at the end of the line). Comments are used to document source
 code, and they usually convey information that cannot be expressed
 otherwise.
