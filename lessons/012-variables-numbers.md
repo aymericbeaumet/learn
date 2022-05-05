@@ -8,8 +8,8 @@ assert:
 
 # Variables: Numbers
 
-Storing text in variables is convenient, but what if you need to count
-things? In this case you would want to use numbers.
+Storing text in variables is convenient, but what if you need to count things?
+In this case you would want to use numbers.
 
 You would input numbers with digits from 0 to 9.
 

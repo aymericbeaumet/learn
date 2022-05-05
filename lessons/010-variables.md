@@ -6,8 +6,8 @@ assert:
 # Variables
 
 Congratulations! You've just edited your first piece of JavaScript. But what
-have you done exactly? In fact, you've just touched one of the most
-important pieces in programming: variables.
+have you done exactly? In fact, you've just touched one of the most important
+pieces in programming: variables.
 
 Variables enable you to store information in your program. Without them,
 programming wouldn't really be interesting. You can store a lot of different

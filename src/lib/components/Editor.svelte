@@ -60,6 +60,7 @@
 			minimap: { enabled: false },
 			readOnly,
 			renderLineHighlightOnlyWhenFocus: true,
+			theme: 'vs-dark',
 			value,
 		});
 

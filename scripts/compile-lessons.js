@@ -127,7 +127,7 @@ export function compile(markdown) {
 		if (isComment) {
 			isComment = false;
 			code.pop(); // remove the last newline
-			code.push('\n */\n\n');
+			code.push(`\n*/\n\n`);
 		}
 	};
 
@@ -148,15 +148,13 @@ export function compile(markdown) {
 							.stringify(child)
 							.trimEnd()
 							.split('\n')
-							.map((line) => ` *    ${cleanLine(line)}`)
+							.map((line) => `  ${cleanLine(line)}`)
 							.join('\n'),
 					);
 					code.push('\n');
 				} else {
 					closeComment();
-					code.push(
-						'////////////////////////////////////////////////////////////////////////////////\n',
-					);
+					code.push('//\n');
 					code.push('// +-------+\n');
 					code.push('// | Tasks |\n');
 					code.push('// +-------+\n');
@@ -177,13 +175,12 @@ export function compile(markdown) {
 			case 'heading':
 				closeComment();
 				openComment();
-				code.push(' *  ');
 				if (child.depth === 1) {
-					code.push(pad(child.children[0].value.toUpperCase(), 80 - ' *  '.length).trimEnd());
+					code.push(pad(child.children[0].value.toUpperCase(), 80).trimEnd());
 				} else {
 					code.push(child.children[0].value.toUpperCase());
 				}
-				code.push('\n *\n');
+				code.push(`\n\n`);
 				break;
 
 			case 'paragraph':
@@ -194,10 +191,10 @@ export function compile(markdown) {
 						.stringify(child)
 						.trimEnd()
 						.split('\n')
-						.map((line) => ` *  ${cleanLine(line)}`)
+						.map((line) => '    ' + cleanLine(line))
 						.join('\n'),
 				);
-				code.push('\n *\n');
+				code.push('\n\n');
 				break;
 
 			case 'code':
