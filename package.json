@@ -14,14 +14,14 @@
 		"format": "prettier --write --plugin-search-dir=. ."
 	},
 	"dependencies": {
-		"@babel/parser": "^7.17.9",
+		"@babel/parser": "^7.17.10",
 		"lodash": "^4.17.21",
 		"monaco-editor": "^0.33.0"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-static": "^1.0.0-next.29",
 		"@sveltejs/kit": "next",
-		"eslint": "^8.13.0",
+		"eslint": "^8.14.0",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-svelte3": "^3.4.1",
 		"js-yaml": "^4.1.0",
@@ -31,9 +31,9 @@
 		"remark-gfm": "^3.0.1",
 		"remark-parse": "^10.0.1",
 		"remark-stringify": "^10.0.2",
-		"svelte": "^3.47.0",
+		"svelte": "^3.48.0",
 		"svelte-check": "^2.7.0",
-		"typescript": "~4.6.3",
+		"typescript": "~4.6.4",
 		"unified": "^10.1.2"
 	},
 	"type": "module"
