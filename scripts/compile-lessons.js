@@ -15,11 +15,14 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 const lessonsInputDir = path.join(__dirname, '../lessons/');
 const lessonsOutputDir = path.join(__dirname, '../src/lib/assets/lessons/');
 
-function cleanLine(line) {
-	return line
-		.replace(/\\[*]/g, '*')
-		.replace(/[/][*]/g, '∕*')
-		.replace(/[*][/]/g, '*∕');
+function prepareLine(line) {
+	return (
+		'  ' +
+		line
+			.replace(/\\[*]/g, '*')
+			.replace(/[/][*]/g, '∕*')
+			.replace(/[*][/]/g, '*∕')
+	);
 }
 
 // Create output directory
@@ -146,9 +149,9 @@ export function compile(markdown) {
 						unified()
 							.use(remarkStringify, { listItemIndent: 'one', bullet: '-' })
 							.stringify(child)
-							.trimEnd()
+							.trim()
 							.split('\n')
-							.map((line) => `  ${cleanLine(line)}`)
+							.map((line) => prepareLine(line))
 							.join('\n'),
 					);
 					code.push('\n');
@@ -163,7 +166,7 @@ export function compile(markdown) {
 						unified()
 							.use(remarkStringify, { listItemIndent: 'one' })
 							.stringify(child)
-							.trimEnd()
+							.trim()
 							.split('\n')
 							.map((line) => `// ${line}`)
 							.join('\n'),
@@ -189,9 +192,9 @@ export function compile(markdown) {
 					unified()
 						.use(remarkStringify)
 						.stringify(child)
-						.trimEnd()
+						.trim()
 						.split('\n')
-						.map((line) => '    ' + cleanLine(line))
+						.map((line) => prepareLine(line.trimEnd()))
 						.join('\n'),
 				);
 				code.push('\n\n');
