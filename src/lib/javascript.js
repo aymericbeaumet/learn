@@ -6,17 +6,11 @@ export function execute(code) {
 	const declarations = {};
 	const out = { events, vars, declarations };
 
-	let ast;
-
-	try {
-		ast = babelParser.parse(code, {
-			sourceType: 'script',
-			attachComment: false,
-			strictMode: true,
-		});
-	} catch (err) {
-		return out;
-	}
+	const ast = babelParser.parse(code, {
+		sourceType: 'script',
+		attachComment: false,
+		strictMode: true,
+	});
 
 	ast.program.body.forEach((node) => {
 		if (node.type === 'VariableDeclaration') {

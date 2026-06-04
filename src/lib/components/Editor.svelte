@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
 	import TypeScriptWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
 
 	export let value;
@@ -45,8 +46,11 @@
 
 	onMount(async () => {
 		self.MonacoEnvironment = {
-			getWorker: function () {
-				return new TypeScriptWorker({ type: 'module' });
+			getWorker(_, label) {
+				if (label === 'typescript' || label === 'javascript') {
+					return new TypeScriptWorker();
+				}
+				return new EditorWorker();
 			},
 		};
 
@@ -76,7 +80,7 @@
 	});
 </script>
 
-<div bind:this={domElement} />
+<div bind:this={domElement}></div>
 
 <style>
 	div {

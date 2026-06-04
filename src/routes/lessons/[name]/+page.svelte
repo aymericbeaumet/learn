@@ -1,78 +1,54 @@
-<script context="module">
-	import lessons from '$lib/assets/lessons';
-
-	export async function load({ params, fetch }) {
-		const lesson = lessons[params.name];
-		const res = await fetch(lesson.url);
-
-		if (res.ok) {
-			const { code, frontmatter = {} } = await res.json();
-
-			// Replace any 'undefined' string with `undefined'
-			for (const [key, value] of Object.entries(frontmatter.assert || {})) {
-				if (value === 'undefined') {
-					frontmatter.assert[key] = undefined;
-				}
-			}
-
-			return {
-				status: res.status,
-				props: {
-					done: false,
-					code,
-					frontmatter,
-					lesson: params.name,
-					lessonIndex: lesson.i,
-					lessonsCount: Object.keys(lessons).length,
-					previousLessonURL: lesson.previous ? `/lessons/${lesson.previous}` : '',
-					nextLessonURL: lesson.next ? `/lessons/${lesson.next}` : '',
-				},
-			};
-		} else {
-			return {
-				status: res.status,
-				error: new Error(`could not load ${lesson.url}`),
-			};
-		}
-	}
-</script>
-
 <script>
-	import { goto, prefetch } from '$app/navigation';
+	import { goto, preloadData } from '$app/navigation';
+	import { browser } from '$app/environment';
 	import Editor from '$lib/components/Editor.svelte';
 	import isMatch from 'lodash/isMatch.js';
 	import { execute } from '$lib/javascript';
-	import { browser } from '$app/env';
 	import lessonsAll from '$lib/assets/lessons';
 
-	export let done;
-	export let code;
-	export let frontmatter;
-	export let lesson;
-	export let lessonIndex;
-	export let lessonsCount;
-	export let previousLessonURL;
-	export let nextLessonURL;
+	export let data;
+
+	let code = data.code;
+	let done = data.done;
+	let frontmatter = data.frontmatter;
+	let lesson = data.lesson;
+	let lessonIndex = data.lessonIndex;
+	let lessonsCount = data.lessonsCount;
+	let previousLessonURL = data.previousLessonURL;
+	let nextLessonURL = data.nextLessonURL;
 
 	let vars = {};
 	let declarations = {};
 	let selections = [];
 	let position = null;
 
-	$: if (browser) {
-		prefetch(nextLessonURL);
+	$: if (data.lesson !== lesson) {
+		code = data.code;
+		done = data.done;
+		frontmatter = data.frontmatter;
+		lesson = data.lesson;
+		lessonIndex = data.lessonIndex;
+		lessonsCount = data.lessonsCount;
+		previousLessonURL = data.previousLessonURL;
+		nextLessonURL = data.nextLessonURL;
+		vars = {};
+		declarations = {};
+		selections = [];
+		position = null;
 	}
 
-	$: {
-		if (!done) {
-			try {
-				const out = execute(code);
-				done = isMatch(out.vars, frontmatter.assert || {});
-				vars = out.vars;
-				declarations = out.declarations;
-			} catch (err) {
-				console.error(err);
-			}
+	$: if (browser && nextLessonURL) {
+		preloadData(nextLessonURL);
+	}
+
+	$: if (!done) {
+		try {
+			const out = execute(code);
+			done = isMatch(out.vars, frontmatter.assert || {});
+			vars = out.vars;
+			declarations = out.declarations;
+		} catch {
+			// Invalid or failing code: keep the last successful vars/declarations.
 		}
 	}
 
@@ -123,27 +99,34 @@
 		switch (type) {
 			case 'bigint':
 				return [
-					value,
+					`${value}n`,
 					type,
 					'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#bigint_type',
 				];
 			case 'boolean':
-				return [value, type, 'https://developer.mozilla.org/en-US/docs/Glossary/Boolean'];
+				return [String(value), type, 'https://developer.mozilla.org/en-US/docs/Glossary/Boolean'];
 			case 'function':
 				return [
-					value,
+					String(value),
 					type,
 					'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions',
 				];
 			case 'number':
 				return [
-					value,
+					String(value),
 					type,
 					'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type',
 				];
 			case 'object':
+				if (value === null) {
+					return [
+						'null',
+						'null',
+						'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null',
+					];
+				}
 				return [
-					value,
+					JSON.stringify(value),
 					type,
 					'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object',
 				];
@@ -155,12 +138,12 @@
 				];
 			case 'symbol':
 				return [
-					value,
+					value.toString(),
 					type,
 					'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol',
 				];
 			case 'undefined':
-				return [value, type, 'https://developer.mozilla.org/en-US/docs/Glossary/undefined'];
+				return ['undefined', type, 'https://developer.mozilla.org/en-US/docs/Glossary/undefined'];
 			default:
 				throw new Error(
 					`unsupported value ${JSON.stringify(value)} with type ${JSON.stringify(type)}`,
@@ -225,7 +208,7 @@
 	</main>
 
 	<nav>
-		<div class="progress" style={`width: ${(lessonIndex / lessonsCount) * 100}%;`} />
+		<div class="progress" style={`width: ${(lessonIndex / lessonsCount) * 100}%;`}></div>
 		<div class="menu">
 			<div class="previous">
 				{#if previousLessonURL}

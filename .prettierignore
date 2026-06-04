@@ -1,1 +1,10 @@
-.gitignore
+.DS_Store
+node_modules
+build
+.svelte-kit
+package
+.env
+.env.*
+!.env.example
+src/lib/assets/lessons/
+package-lock.json
